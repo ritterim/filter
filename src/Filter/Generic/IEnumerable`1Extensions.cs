@@ -40,9 +40,59 @@ namespace RimDev.Filter.Generic
                     {
                         queryableValue = queryableValue.Contains(validValuePropertyName, (IEnumerable)filterPropertyValue);
                     }
-                    else if (typeof(Range<int>).IsAssignableFrom(filterProperty.PropertyType))
+                    else if (filterProperty.PropertyType.IsGenericType &&
+                        filterProperty.PropertyType.GetGenericTypeDefinition() == typeof(Range<>))
                     {
-                        queryableValue = queryableValue.Range(validValuePropertyName, (Range<int>)filterPropertyValue);
+                        var genericTypeArgument = filterPropertyValue.GetType().GenericTypeArguments.First();
+
+                        if (genericTypeArgument == typeof(byte))
+                        {
+                            queryableValue = queryableValue.Range(validValuePropertyName, (Range<byte>)filterPropertyValue);
+                        }
+                        else if (genericTypeArgument == typeof(char))
+                        {
+                            queryableValue = queryableValue.Range(validValuePropertyName, (Range<char>)filterPropertyValue);
+                        }
+                        else if (genericTypeArgument == typeof(decimal))
+                        {
+                            queryableValue = queryableValue.Range(validValuePropertyName, (Range<decimal>)filterPropertyValue);
+                        }
+                        else if (genericTypeArgument == typeof(double))
+                        {
+                            queryableValue = queryableValue.Range(validValuePropertyName, (Range<double>)filterPropertyValue);
+                        }
+                        else if (genericTypeArgument == typeof(float))
+                        {
+                            queryableValue = queryableValue.Range(validValuePropertyName, (Range<float>)filterPropertyValue);
+                        }
+                        else if (genericTypeArgument == typeof(int))
+                        {
+                            queryableValue = queryableValue.Range(validValuePropertyName, (Range<int>)filterPropertyValue);
+                        }
+                        else if (genericTypeArgument == typeof(long))
+                        {
+                            queryableValue = queryableValue.Range(validValuePropertyName, (Range<long>)filterPropertyValue);
+                        }
+                        else if (genericTypeArgument == typeof(sbyte))
+                        {
+                            queryableValue = queryableValue.Range(validValuePropertyName, (Range<sbyte>)filterPropertyValue);
+                        }
+                        else if (genericTypeArgument == typeof(short))
+                        {
+                            queryableValue = queryableValue.Range(validValuePropertyName, (Range<short>)filterPropertyValue);
+                        }
+                        else if (genericTypeArgument == typeof(uint))
+                        {
+                            queryableValue = queryableValue.Range(validValuePropertyName, (Range<uint>)filterPropertyValue);
+                        }
+                        else if (genericTypeArgument == typeof(ulong))
+                        {
+                            queryableValue = queryableValue.Range(validValuePropertyName, (Range<ulong>)filterPropertyValue);
+                        }
+                        else if (genericTypeArgument == typeof(ushort))
+                        {
+                            queryableValue = queryableValue.Range(validValuePropertyName, (Range<ushort>)filterPropertyValue);
+                        }
                     }
                     else
                     {
@@ -103,7 +153,9 @@ namespace RimDev.Filter.Generic
             Range<TRange> range)
         {
             var parameterExpression = Expression.Parameter(typeof(T), "x");
-            var propertyExpression = Expression.Property(parameterExpression, property);
+            var propertyExpression = Expression.Convert(
+                Expression.Property(parameterExpression, property),
+                typeof(TRange));
 
             var minConstantExpression = Expression.Constant(range.MinValue);
             BinaryExpression minGreaterExpression = range.IsMinInclusive

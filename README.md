@@ -61,6 +61,23 @@ filteredPeople = people.Filter(new
 
 This is a new type which allows an easy way to represent a range of values when filtering. An instance can either be created manually or via a helper which takes a string formatted using standard [interval notation](http://en.wikipedia.org/wiki/Interval_%28mathematics%29).
 
+While any type is allowed as a range, only certain types will work when filtering:
+
+  - byte
+  - char
+  - decimal
+  - double
+  - float
+  - int
+  - long
+  - sbyte
+  - short
+  - uint
+  - ulong
+  - ushort
+
+Any other types will just silently get passed-over.
+
 ### Usage
 
 ```csharp
@@ -82,8 +99,7 @@ var range = Range.FromString<int>("(0,10]");
 ## Current limitations
 
   - The library currently only works with class-type collections.
-  - Only `Range<int>` works during filtering.
-  - All exceptions are trapped within the `Filter` call.
+  - Constant filter-value (i.e. non-enumerable or range) exceptions are trapped within the `Filter` call.
 
 ## License
 
