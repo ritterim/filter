@@ -53,6 +53,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Generic\IRange`1Tests.cs" />
+    <Compile Include="Generic\Range`1Tests.cs" />
     <Compile Include="RangeTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

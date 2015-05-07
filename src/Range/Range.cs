@@ -6,7 +6,7 @@ namespace RimDev.Filter.Range
 {
     public static class Range
     {
-        public static Range<T> FromString<T>(string value)
+        public static IRange<T> FromString<T>(string value)
         {
             var range = new Range<T>();
 
