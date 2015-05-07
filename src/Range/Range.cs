@@ -1,5 +1,6 @@
 ﻿using RimDev.Filter.Range.Generic;
 using System;
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
 namespace RimDev.Filter.Range
