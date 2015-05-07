@@ -41,7 +41,7 @@ namespace RimDev.Filter.Generic
                         queryableValue = queryableValue.Contains(validValuePropertyName, (IEnumerable)filterPropertyValue);
                     }
                     else if (filterProperty.PropertyType.IsGenericType &&
-                        filterProperty.PropertyType.GetGenericTypeDefinition() == typeof(Range<>))
+                        filterProperty.PropertyType.GetGenericTypeDefinition() == typeof(IRange<>))
                     {
                         var genericTypeArgument = filterPropertyValue.GetType().GenericTypeArguments.First();
 

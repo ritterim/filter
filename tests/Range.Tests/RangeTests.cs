@@ -1,4 +1,5 @@
-﻿using System;
+﻿using RimDev.Filter.Range.Generic;
+using System;
 using Xunit;
 
 namespace RimDev.Filter.Range.Tests
