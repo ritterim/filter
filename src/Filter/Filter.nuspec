@@ -12,7 +12,6 @@
     <tags>rimdev ienumerable filter range</tags>
   </metadata>
   <files>
-    <file src="bin\Release\RimDev.Filter.dll" target="lib\net45" />
-    <file src="bin\Release\RimDev.Filter.pdb" target="lib\net45" />
+    <file src="bin\Release\RimDev.*.dll" target="lib\net45" />
   </files>
 </package>
