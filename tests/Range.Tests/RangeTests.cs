@@ -102,6 +102,18 @@ namespace RimDev.Filter.Range.Tests
 
                 Assert.Equal("[1,5]", value);
             }
+
+            [Fact]
+            public void Directly_cast_from_a_string()
+            {
+                var range = (Range<int>)"[1,5]";
+
+                Assert.NotNull(range);
+                Assert.Equal(1, range.MinValue);
+                Assert.Equal(true, range.IsMinInclusive);
+                Assert.Equal(true, range.IsMaxInclusive);
+                Assert.Equal(5, range.MaxValue);
+            }
         }
     }
 }
