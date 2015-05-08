@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Xunit;
 
-namespace Filter.Tests.Generic
+namespace RimDev.Filter.Tests.Generic
 {
     public class IEnumerable_1ExtensionsTests
     {
@@ -101,7 +101,7 @@ namespace Filter.Tests.Generic
                 {
                     var @return = people.Filter(new
                     {
-                        FavoriteNumber = Range.FromString<byte>("[5,5]")
+                        FavoriteNumber = RimDev.Filter.Range.Range.FromString<byte>("[5,5]")
                     });
 
                     Assert.NotNull(@return);
@@ -114,7 +114,7 @@ namespace Filter.Tests.Generic
                 {
                     var @return = people.Filter(new
                     {
-                        FavoriteLetter = Range.FromString<char>("[a,b)")
+                        FavoriteLetter = RimDev.Filter.Range.Range.FromString<char>("[a,b)")
                     });
 
                     Assert.NotNull(@return);
@@ -127,7 +127,7 @@ namespace Filter.Tests.Generic
                 {
                     var @return = people.Filter(new
                     {
-                        FavoriteNumber = Range.FromString<decimal>("[4.5,5]")
+                        FavoriteNumber = RimDev.Filter.Range.Range.FromString<decimal>("[4.5,5]")
                     });
 
                     Assert.NotNull(@return);
@@ -140,7 +140,7 @@ namespace Filter.Tests.Generic
                 {
                     var @return = people.Filter(new
                     {
-                        FavoriteNumber = Range.FromString<double>("[4.5,5]")
+                        FavoriteNumber = RimDev.Filter.Range.Range.FromString<double>("[4.5,5]")
                     });
 
                     Assert.NotNull(@return);
@@ -153,7 +153,7 @@ namespace Filter.Tests.Generic
                 {
                     var @return = people.Filter(new
                     {
-                        FavoriteNumber = Range.FromString<float>("[4.5,5]")
+                        FavoriteNumber = RimDev.Filter.Range.Range.FromString<float>("[4.5,5]")
                     });
 
                     Assert.NotNull(@return);
@@ -166,7 +166,7 @@ namespace Filter.Tests.Generic
                 {
                     var @return = people.Filter(new
                     {
-                        FavoriteNumber = Range.FromString<int>("[5,5]")
+                        FavoriteNumber = RimDev.Filter.Range.Range.FromString<int>("[5,5]")
                     });
 
                     Assert.NotNull(@return);
@@ -179,7 +179,7 @@ namespace Filter.Tests.Generic
                 {
                     var @return = people.Filter(new
                     {
-                        FavoriteNumber = Range.FromString<long>("[5,5]")
+                        FavoriteNumber = RimDev.Filter.Range.Range.FromString<long>("[5,5]")
                     });
 
                     Assert.NotNull(@return);
@@ -192,7 +192,7 @@ namespace Filter.Tests.Generic
                 {
                     var @return = people.Filter(new
                     {
-                        FavoriteNumber = Range.FromString<sbyte>("[5,5]")
+                        FavoriteNumber = RimDev.Filter.Range.Range.FromString<sbyte>("[5,5]")
                     });
 
                     Assert.NotNull(@return);
@@ -205,7 +205,7 @@ namespace Filter.Tests.Generic
                 {
                     var @return = people.Filter(new
                     {
-                        FavoriteNumber = Range.FromString<short>("[5,5]")
+                        FavoriteNumber = RimDev.Filter.Range.Range.FromString<short>("[5,5]")
                     });
 
                     Assert.NotNull(@return);
@@ -218,7 +218,7 @@ namespace Filter.Tests.Generic
                 {
                     var @return = people.Filter(new
                     {
-                        FavoriteNumber = Range.FromString<uint>("[5,5]")
+                        FavoriteNumber = RimDev.Filter.Range.Range.FromString<uint>("[5,5]")
                     });
 
                     Assert.NotNull(@return);
@@ -231,7 +231,7 @@ namespace Filter.Tests.Generic
                 {
                     var @return = people.Filter(new
                     {
-                        FavoriteNumber = Range.FromString<ulong>("[5,5]")
+                        FavoriteNumber = RimDev.Filter.Range.Range.FromString<ulong>("[5,5]")
                     });
 
                     Assert.NotNull(@return);
@@ -244,7 +244,7 @@ namespace Filter.Tests.Generic
                 {
                     var @return = people.Filter(new
                     {
-                        FavoriteNumber = Range.FromString<ushort>("[5,5]")
+                        FavoriteNumber = RimDev.Filter.Range.Range.FromString<ushort>("[5,5]")
                     });
 
                     Assert.NotNull(@return);

@@ -10,8 +10,8 @@
     <ProjectGuid>{A5283D85-C24D-467A-8B29-315320E5F80F}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Filter.Tests</RootNamespace>
-    <AssemblyName>Filter.Tests</AssemblyName>
+    <RootNamespace>RimDev.Filter.Tests</RootNamespace>
+    <AssemblyName>RimDev.Filter.Tests</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <NuGetPackageImportStamp>0af85866</NuGetPackageImportStamp>
@@ -52,6 +52,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="FilterTests.cs" />
     <Compile Include="Generic\IEnumerable`1ExtensionsTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
