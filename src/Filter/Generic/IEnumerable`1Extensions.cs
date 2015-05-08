@@ -14,99 +14,108 @@ namespace RimDev.Filter.Generic
             this IEnumerable<T> value,
             object filter)
         {
-            var validValueProperties = typeof(T).GetProperties(
-                BindingFlags.Public | BindingFlags.Instance)
-                .Where(x => x.CanRead == true);
-
-            var filterProperties = filter.GetType().GetProperties(
-                BindingFlags.Public | BindingFlags.Instance)
-                .Where(x => x.CanRead == true);
-
-            var queryableValue = value.AsQueryable();
-
-            foreach (var filterProperty in filterProperties)
+            if (filter == null)
             {
-                var validValueProperty = validValueProperties
-                    .Where(x => x.Name == filterProperty.Name)
-                    .FirstOrDefault();
-                var filterPropertyValue = filterProperty.GetValue(filter, null);
+                return value;
+            }
+            else
+            {
+                var validValueProperties = typeof(T).GetProperties(
+                    BindingFlags.Public | BindingFlags.Instance)
+                    .Where(x => x.CanRead == true);
 
-                if (validValueProperty != null)
+                var filterProperties = filter.GetType().GetProperties(
+                    BindingFlags.Public | BindingFlags.Instance)
+                    .Where(x => x.CanRead == true);
+
+                var queryableValue = value.AsQueryable();
+
+                foreach (var filterProperty in filterProperties)
                 {
-                    var validValuePropertyName = validValueProperty.Name;
+                    var validValueProperty = validValueProperties
+                        .Where(x => x.Name == filterProperty.Name)
+                        .FirstOrDefault();
+                    var filterPropertyValue = filterProperty.GetValue(filter, null);
 
-                    if (typeof(IEnumerable).IsAssignableFrom(filterProperty.PropertyType) &&
-                        filterProperty.PropertyType != typeof(string))
+                    if (validValueProperty != null && filterPropertyValue != null)
                     {
-                        queryableValue = queryableValue.Contains(validValuePropertyName, (IEnumerable)filterPropertyValue);
-                    }
-                    else if (filterProperty.PropertyType.IsGenericType &&
-                        filterProperty.PropertyType.GetGenericTypeDefinition() == typeof(IRange<>))
-                    {
-                        var genericTypeArgument = filterPropertyValue.GetType().GenericTypeArguments.First();
+                        var validValuePropertyName = validValueProperty.Name;
 
-                        if (genericTypeArgument == typeof(byte))
+                        if (typeof(IEnumerable).IsAssignableFrom(filterProperty.PropertyType) &&
+                            filterProperty.PropertyType != typeof(string))
                         {
-                            queryableValue = queryableValue.Range(validValuePropertyName, (Range<byte>)filterPropertyValue);
+                            queryableValue = queryableValue.Contains(validValuePropertyName, (IEnumerable)filterPropertyValue);
                         }
-                        else if (genericTypeArgument == typeof(char))
+                        else if (filterProperty.PropertyType.IsGenericType &&
+                            (
+                            typeof(IRange<>).IsAssignableFrom(filterProperty.PropertyType.GetGenericTypeDefinition()) ||
+                            typeof(Range<>).IsAssignableFrom(filterProperty.PropertyType.GetGenericTypeDefinition())))
                         {
-                            queryableValue = queryableValue.Range(validValuePropertyName, (Range<char>)filterPropertyValue);
+                            var genericTypeArgument = filterPropertyValue.GetType().GenericTypeArguments.First();
+
+                            if (genericTypeArgument == typeof(byte))
+                            {
+                                queryableValue = queryableValue.Range(validValuePropertyName, (Range<byte>)filterPropertyValue);
+                            }
+                            else if (genericTypeArgument == typeof(char))
+                            {
+                                queryableValue = queryableValue.Range(validValuePropertyName, (Range<char>)filterPropertyValue);
+                            }
+                            else if (genericTypeArgument == typeof(decimal))
+                            {
+                                queryableValue = queryableValue.Range(validValuePropertyName, (Range<decimal>)filterPropertyValue);
+                            }
+                            else if (genericTypeArgument == typeof(double))
+                            {
+                                queryableValue = queryableValue.Range(validValuePropertyName, (Range<double>)filterPropertyValue);
+                            }
+                            else if (genericTypeArgument == typeof(float))
+                            {
+                                queryableValue = queryableValue.Range(validValuePropertyName, (Range<float>)filterPropertyValue);
+                            }
+                            else if (genericTypeArgument == typeof(int))
+                            {
+                                queryableValue = queryableValue.Range(validValuePropertyName, (Range<int>)filterPropertyValue);
+                            }
+                            else if (genericTypeArgument == typeof(long))
+                            {
+                                queryableValue = queryableValue.Range(validValuePropertyName, (Range<long>)filterPropertyValue);
+                            }
+                            else if (genericTypeArgument == typeof(sbyte))
+                            {
+                                queryableValue = queryableValue.Range(validValuePropertyName, (Range<sbyte>)filterPropertyValue);
+                            }
+                            else if (genericTypeArgument == typeof(short))
+                            {
+                                queryableValue = queryableValue.Range(validValuePropertyName, (Range<short>)filterPropertyValue);
+                            }
+                            else if (genericTypeArgument == typeof(uint))
+                            {
+                                queryableValue = queryableValue.Range(validValuePropertyName, (Range<uint>)filterPropertyValue);
+                            }
+                            else if (genericTypeArgument == typeof(ulong))
+                            {
+                                queryableValue = queryableValue.Range(validValuePropertyName, (Range<ulong>)filterPropertyValue);
+                            }
+                            else if (genericTypeArgument == typeof(ushort))
+                            {
+                                queryableValue = queryableValue.Range(validValuePropertyName, (Range<ushort>)filterPropertyValue);
+                            }
                         }
-                        else if (genericTypeArgument == typeof(decimal))
+                        else
                         {
-                            queryableValue = queryableValue.Range(validValuePropertyName, (Range<decimal>)filterPropertyValue);
+                            try
+                            {
+                                queryableValue = queryableValue.Where(validValuePropertyName, filterPropertyValue);
+                            }
+                            catch (Exception)
+                            { }
                         }
-                        else if (genericTypeArgument == typeof(double))
-                        {
-                            queryableValue = queryableValue.Range(validValuePropertyName, (Range<double>)filterPropertyValue);
-                        }
-                        else if (genericTypeArgument == typeof(float))
-                        {
-                            queryableValue = queryableValue.Range(validValuePropertyName, (Range<float>)filterPropertyValue);
-                        }
-                        else if (genericTypeArgument == typeof(int))
-                        {
-                            queryableValue = queryableValue.Range(validValuePropertyName, (Range<int>)filterPropertyValue);
-                        }
-                        else if (genericTypeArgument == typeof(long))
-                        {
-                            queryableValue = queryableValue.Range(validValuePropertyName, (Range<long>)filterPropertyValue);
-                        }
-                        else if (genericTypeArgument == typeof(sbyte))
-                        {
-                            queryableValue = queryableValue.Range(validValuePropertyName, (Range<sbyte>)filterPropertyValue);
-                        }
-                        else if (genericTypeArgument == typeof(short))
-                        {
-                            queryableValue = queryableValue.Range(validValuePropertyName, (Range<short>)filterPropertyValue);
-                        }
-                        else if (genericTypeArgument == typeof(uint))
-                        {
-                            queryableValue = queryableValue.Range(validValuePropertyName, (Range<uint>)filterPropertyValue);
-                        }
-                        else if (genericTypeArgument == typeof(ulong))
-                        {
-                            queryableValue = queryableValue.Range(validValuePropertyName, (Range<ulong>)filterPropertyValue);
-                        }
-                        else if (genericTypeArgument == typeof(ushort))
-                        {
-                            queryableValue = queryableValue.Range(validValuePropertyName, (Range<ushort>)filterPropertyValue);
-                        }
-                    }
-                    else
-                    {
-                        try
-                        {
-                            queryableValue = queryableValue.Where(validValuePropertyName, filterPropertyValue);
-                        }
-                        catch (Exception)
-                        { }
                     }
                 }
-            }
 
-            return queryableValue.AsEnumerable();
+                return queryableValue.AsEnumerable();
+            }
         }
 
         private static IQueryable<T> Contains<T>(
