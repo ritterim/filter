@@ -81,6 +81,27 @@ namespace RimDev.Filter.Range.Tests
                     "parsed maximum value `abc` does not match expected type of `Int32`.",
                     exception.Message);
             }
+
+            [Fact]
+            public void Implicitly_cast_from_string_to_range()
+            {
+                Range<int> range = "[1,5]";
+
+                Assert.NotNull(range);
+                Assert.Equal(1, range.MinValue);
+                Assert.Equal(true, range.IsMinInclusive);
+                Assert.Equal(true, range.IsMaxInclusive);
+                Assert.Equal(5, range.MaxValue);
+            }
+
+            [Fact]
+            public void Implicitly_cast_from_range_to_string()
+            {
+                var range = Range.FromString<int>("[1,5]") as Range<int>;
+                string value = range;
+
+                Assert.Equal("[1,5]", value);
+            }
         }
     }
 }
