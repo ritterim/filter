@@ -1,4 +1,4 @@
-﻿# Filter
+﻿# Filter [![RimDev.Filter NuGet badge](https://img.shields.io/nuget/v/RimDev.Filter.svg)](http://www.nuget.org/packages/RimDev.Filter/) [![RimDev.Filter NuGet downloads](https://img.shields.io/nuget/dt/RimDev.Filter.svg)](http://www.nuget.org/packages/RimDev.Filter/)
 
 > "the classy way to filter collections"
 
