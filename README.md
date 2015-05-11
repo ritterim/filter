@@ -1,8 +1,16 @@
-# Filter
+﻿# Filter
 
 > "the classy way to filter collections"
 
 This library allows an IEnumerable to be filtered using either a typed or anonymous class.
+
+## Installation
+
+Install the [RimDev.Filter](https://www.nuget.org/packages/RimDev.Filter/) NuGet package.
+
+```shell
+Install-Package RimDev.Filter
+```
 
 ## Usage
 
@@ -65,6 +73,7 @@ While any type is allowed as a range, only certain types will work when filterin
 
   - byte
   - char
+  - DateTime
   - decimal
   - double
   - float
@@ -94,6 +103,36 @@ var range = new Range<int>()
 
 // or with helper.
 var range = Range.FromString<int>("(0,10]");
+```
+
+### Implicit casting
+
+Instead of having to call the static-helper `Range.FromString<T>`, you can also leverage implicit casting support:
+
+```csharp
+Range<int> range = "[1,5]";
+
+// or...
+
+// Type is Range<int>.
+var range2 = (Range<int>)"[1,5]";
+```
+
+### Open-ended support
+
+Instead of having to specify both lower and upper-bound, you can truncate one of the two:
+
+```csharp
+
+// x <= 5
+var range = (Range<int>)"(,5]";
+
+// range.MinValue.HasValue = false;
+
+// or use Unicode
+
+var range2 = (Range<int>)"(-∞,5]";
+var range3 = (Range<int>)"[1,+∞)";
 ```
 
 ## Current limitations
