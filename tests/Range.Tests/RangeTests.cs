@@ -8,10 +8,23 @@ namespace RimDev.Filter.Range.Tests
     {
         public class FromString
         {
-            [Fact]
-            public void Can_parse_valid_string()
+            [Theory,
+            InlineData("(-∞,456)"),
+            InlineData("(123,+∞)")]
+            public void Can_parse_infinity(string value)
             {
-                var @return = Range.FromString<int>("(123,456)");
+                var @return = Range.FromString<int>(value);
+
+                Assert.NotNull(@return);
+            }
+
+            [Theory,
+            InlineData("(123,456)"),
+            InlineData("(,456)"),
+            InlineData("(123,)")]
+            public void Can_parse_valid_string(string value)
+            {
+                var @return = Range.FromString<int>(value);
 
                 Assert.NotNull(@return);
             }
@@ -41,16 +54,61 @@ namespace RimDev.Filter.Range.Tests
             }
 
             [Fact]
-            public void Throws_if_format_is_not_valid()
+            public void Throws_if_both_min_and_max_are_open_ended()
             {
                 var exception = Assert.Throws<FormatException>(() =>
                 {
-                    Range.FromString<int>("<123,456>");
+                    Range.FromString<int>("(,)");
+                });
+
+                Assert.NotNull(exception);
+                Assert.Equal(
+                    "value cannot be open-ended for both min and max-values.",
+                    exception.Message);
+            }
+
+            [Theory,
+            InlineData("<123,456>"),
+            InlineData("{123,456)"),
+            InlineData("(123,456}")]
+            public void Throws_if_format_is_not_valid(string value)
+            {
+                var exception = Assert.Throws<FormatException>(() =>
+                {
+                    Range.FromString<int>(value);
                 });
 
                 Assert.NotNull(exception);
                 Assert.Equal(
                     "value does not match expected format.",
+                    exception.Message);
+            }
+
+            [Fact]
+            public void Throws_if_inclusive_infinite_lower_bound()
+            {
+                var exception = Assert.Throws<FormatException>(() =>
+                {
+                    Range.FromString<int>("[-∞,456)");
+                });
+
+                Assert.NotNull(exception);
+                Assert.Equal(
+                    "value cannot have inclusive infinite lower-bound.",
+                    exception.Message);
+            }
+
+            [Fact]
+            public void Throws_if_inclusive_infinite_upper_bound()
+            {
+                var exception = Assert.Throws<FormatException>(() =>
+                {
+                    Range.FromString<int>("(123,+∞]");
+                });
+
+                Assert.NotNull(exception);
+                Assert.Equal(
+                    "value cannot have inclusive infinite upper-bound.",
                     exception.Message);
             }
 
