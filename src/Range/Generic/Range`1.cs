@@ -1,6 +1,7 @@
 ﻿namespace RimDev.Filter.Range.Generic
 {
     public class Range<T> : IRange<T>
+        where T : struct
     {
         public Range() { }
 
@@ -13,8 +14,8 @@
             IsMaxInclusive = value.IsMaxInclusive;
         }
 
-        public T MinValue { get; set; }
-        public T MaxValue { get; set; }
+        public T? MinValue { get; set; }
+        public T? MaxValue { get; set; }
 
         public bool IsMinInclusive { get; set; }
         public bool IsMaxInclusive { get; set; }

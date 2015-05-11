@@ -8,10 +8,11 @@ namespace RimDev.Filter.Range
     public static class Range
     {
         public static IRange<T> FromString<T>(string value)
+            where T : struct
         {
             var range = new Range<T>();
 
-            var parsedValue = Regex.Match(value, "([\\[\\(])(.+?),(.+?)([\\]\\)])");
+            var parsedValue = Regex.Match(value, "([\\[\\(])(.+?)?,(.+?)?([\\]\\)])");
 
             if (!parsedValue.Success)
             {
@@ -20,38 +21,66 @@ namespace RimDev.Filter.Range
             else
             {
                 var groups = parsedValue.Groups;
+                var parsedMinValue = groups[2].Value;
+                var parsedMaxValue = groups[3].Value;
+                var isMinInclusive = groups[1].Value == "[" ? true : false;
+                var isMaxInclusive = groups[4].Value == "]" ? true : false;
+                var isMinInfinite = parsedMinValue == "-∞" ? true : false;
+                var isMaxInfinite = parsedMaxValue == "+∞" ? true : false;
 
-                T minValue = default(T);
-                T maxValue = default(T);
-
-                try
+                if (string.IsNullOrWhiteSpace(parsedMinValue) &&
+                    string.IsNullOrWhiteSpace(parsedMaxValue))
                 {
-                    minValue = (T)Convert.ChangeType(groups[2].Value, typeof(T));
-                }
-                catch (Exception)
-                {
-                    throw new FormatException(
-                        string.Format("parsed minimum value `{0}` does not match expected type of `{1}`.",
-                        groups[2].Value,
-                        typeof(T).Name));
+                    throw new FormatException("value cannot be open-ended for both min and max-values.");
                 }
 
-                try
+                if (isMinInclusive && isMinInfinite)
                 {
-                    maxValue = (T)Convert.ChangeType(groups[3].Value, typeof(T));
+                    throw new FormatException("value cannot have inclusive infinite lower-bound.");
                 }
-                catch (Exception)
+
+                if (isMaxInclusive && isMaxInfinite)
                 {
-                    throw new FormatException(
-                        string.Format("parsed maximum value `{0}` does not match expected type of `{1}`.",
-                        groups[3].Value,
-                        typeof(T).Name));
+                    throw new FormatException("value cannot have inclusive infinite upper-bound.");
+                }
+
+                T? minValue = default(T?);
+                T? maxValue = default(T?);
+
+                if (!string.IsNullOrWhiteSpace(parsedMinValue) && !isMinInfinite)
+                {
+                    try
+                    {
+                        minValue = (T)Convert.ChangeType(parsedMinValue, typeof(T));
+                    }
+                    catch (Exception)
+                    {
+                        throw new FormatException(
+                            string.Format("parsed minimum value `{0}` does not match expected type of `{1}`.",
+                            groups[2].Value,
+                            typeof(T).Name));
+                    }
+                }
+
+                if (!string.IsNullOrWhiteSpace(parsedMaxValue) && !isMaxInfinite)
+                {
+                    try
+                    {
+                        maxValue = (T)Convert.ChangeType(parsedMaxValue, typeof(T));
+                    }
+                    catch (Exception)
+                    {
+                        throw new FormatException(
+                            string.Format("parsed maximum value `{0}` does not match expected type of `{1}`.",
+                            groups[3].Value,
+                            typeof(T).Name));
+                    }
                 }
 
                 range.MinValue = minValue;
                 range.MaxValue = maxValue;
-                range.IsMinInclusive = groups[1].Value == "[" ? true : false;
-                range.IsMaxInclusive = groups[4].Value == "]" ? true : false;
+                range.IsMinInclusive = isMinInclusive;
+                range.IsMaxInclusive = isMaxInclusive;
             }
 
             return range;

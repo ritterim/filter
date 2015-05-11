@@ -1,9 +1,12 @@
-﻿namespace RimDev.Filter.Range.Generic
+﻿using System;
+
+namespace RimDev.Filter.Range.Generic
 {
-    public interface IRange<out T>
+    public interface IRange<T>
+        where T : struct
     {
-        T MinValue { get; }
-        T MaxValue { get; }
+        T? MinValue { get; }
+        T? MaxValue { get; }
 
         bool IsMinInclusive { get; }
         bool IsMaxInclusive { get; }

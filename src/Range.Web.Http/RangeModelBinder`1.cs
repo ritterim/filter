@@ -6,6 +6,7 @@ using System.Web.Http.ModelBinding;
 namespace RimDev.Filter.Range.Web.Http
 {
     public class RangeModelBinder<T> : IModelBinder
+        where T : struct
     {
         public bool BindModel(HttpActionContext actionContext, ModelBindingContext bindingContext)
         {
