@@ -19,12 +19,11 @@
         public bool IsMinInclusive { get; set; }
         public bool IsMaxInclusive { get; set; }
 
-        // User-defined conversion from Digit to double 
         public static implicit operator string(Range<T> range)
         {
             return range.ToString();
         }
-        //  User-defined conversion from double to Digit 
+
         public static implicit operator Range<T>(string range)
         {
             return Range.FromString<T>(range) as Range<T>;
