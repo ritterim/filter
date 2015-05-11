@@ -109,6 +109,25 @@ namespace RimDev.Filter.Tests.Generic
             public class RangeFilters : Filter
             {
                 [Fact]
+                public void Should_filter_for_concrete_range()
+                {
+                    var @return = people.Filter(new
+                    {
+                        FavoriteNumber = new RimDev.Filter.Range.Generic.Range<int>()
+                        {
+                            MinValue = 5,
+                            MaxValue = 5,
+                            IsMinInclusive = true,
+                            IsMaxInclusive = true
+                        }
+                    });
+
+                    Assert.NotNull(@return);
+                    Assert.Equal(1, @return.Count());
+                    Assert.Equal("John", @return.First().FirstName);
+                }
+
+                [Fact]
                 public void Should_filter_when_property_types_match_as_range_byte()
                 {
                     var @return = people.Filter(new

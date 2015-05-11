@@ -47,59 +47,60 @@ namespace RimDev.Filter.Generic
                             queryableValue = queryableValue.Contains(validValuePropertyName, (IEnumerable)filterPropertyValue);
                         }
                         else if (filterProperty.PropertyType.IsGenericType &&
-                            (
                             typeof(IRange<>).IsAssignableFrom(filterProperty.PropertyType.GetGenericTypeDefinition()) ||
-                            typeof(Range<>).IsAssignableFrom(filterProperty.PropertyType.GetGenericTypeDefinition())))
+                            filterProperty.PropertyType.GetInterfaces()
+                            .Where(x => x.IsGenericType)
+                            .Any(x => x.GetGenericTypeDefinition() == typeof(IRange<>)))
                         {
                             var genericTypeArgument = filterPropertyValue.GetType().GenericTypeArguments.First();
 
                             if (genericTypeArgument == typeof(byte))
                             {
-                                queryableValue = queryableValue.Range(validValuePropertyName, (Range<byte>)filterPropertyValue);
+                                queryableValue = queryableValue.Range(validValuePropertyName, (IRange<byte>)filterPropertyValue);
                             }
                             else if (genericTypeArgument == typeof(char))
                             {
-                                queryableValue = queryableValue.Range(validValuePropertyName, (Range<char>)filterPropertyValue);
+                                queryableValue = queryableValue.Range(validValuePropertyName, (IRange<char>)filterPropertyValue);
                             }
                             else if (genericTypeArgument == typeof(decimal))
                             {
-                                queryableValue = queryableValue.Range(validValuePropertyName, (Range<decimal>)filterPropertyValue);
+                                queryableValue = queryableValue.Range(validValuePropertyName, (IRange<decimal>)filterPropertyValue);
                             }
                             else if (genericTypeArgument == typeof(double))
                             {
-                                queryableValue = queryableValue.Range(validValuePropertyName, (Range<double>)filterPropertyValue);
+                                queryableValue = queryableValue.Range(validValuePropertyName, (IRange<double>)filterPropertyValue);
                             }
                             else if (genericTypeArgument == typeof(float))
                             {
-                                queryableValue = queryableValue.Range(validValuePropertyName, (Range<float>)filterPropertyValue);
+                                queryableValue = queryableValue.Range(validValuePropertyName, (IRange<float>)filterPropertyValue);
                             }
                             else if (genericTypeArgument == typeof(int))
                             {
-                                queryableValue = queryableValue.Range(validValuePropertyName, (Range<int>)filterPropertyValue);
+                                queryableValue = queryableValue.Range(validValuePropertyName, (IRange<int>)filterPropertyValue);
                             }
                             else if (genericTypeArgument == typeof(long))
                             {
-                                queryableValue = queryableValue.Range(validValuePropertyName, (Range<long>)filterPropertyValue);
+                                queryableValue = queryableValue.Range(validValuePropertyName, (IRange<long>)filterPropertyValue);
                             }
                             else if (genericTypeArgument == typeof(sbyte))
                             {
-                                queryableValue = queryableValue.Range(validValuePropertyName, (Range<sbyte>)filterPropertyValue);
+                                queryableValue = queryableValue.Range(validValuePropertyName, (IRange<sbyte>)filterPropertyValue);
                             }
                             else if (genericTypeArgument == typeof(short))
                             {
-                                queryableValue = queryableValue.Range(validValuePropertyName, (Range<short>)filterPropertyValue);
+                                queryableValue = queryableValue.Range(validValuePropertyName, (IRange<short>)filterPropertyValue);
                             }
                             else if (genericTypeArgument == typeof(uint))
                             {
-                                queryableValue = queryableValue.Range(validValuePropertyName, (Range<uint>)filterPropertyValue);
+                                queryableValue = queryableValue.Range(validValuePropertyName, (IRange<uint>)filterPropertyValue);
                             }
                             else if (genericTypeArgument == typeof(ulong))
                             {
-                                queryableValue = queryableValue.Range(validValuePropertyName, (Range<ulong>)filterPropertyValue);
+                                queryableValue = queryableValue.Range(validValuePropertyName, (IRange<ulong>)filterPropertyValue);
                             }
                             else if (genericTypeArgument == typeof(ushort))
                             {
-                                queryableValue = queryableValue.Range(validValuePropertyName, (Range<ushort>)filterPropertyValue);
+                                queryableValue = queryableValue.Range(validValuePropertyName, (IRange<ushort>)filterPropertyValue);
                             }
                         }
                         else
@@ -173,7 +174,7 @@ namespace RimDev.Filter.Generic
         private static IQueryable<T> Range<T, TRange>(
             this IQueryable<T> query,
             string property,
-            Range<TRange> range)
+            IRange<TRange> range)
         {
             var parameterExpression = Expression.Parameter(typeof(T), "x");
             var propertyExpression = Expression.Convert(
