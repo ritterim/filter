@@ -182,17 +182,52 @@ namespace RimDev.Filter.Generic
                 Expression.Property(parameterExpression, property),
                 typeof(TRange));
 
-            var minConstantExpression = Expression.Constant(range.MinValue);
-            BinaryExpression minGreaterExpression = range.IsMinInclusive
+            ConstantExpression minConstantExpression = null;
+
+            if (range.MinValue.HasValue)
+            {
+                minConstantExpression = Expression.Constant(range.MinValue);
+            }
+
+            BinaryExpression minGreaterExpression = null;
+
+            if (minConstantExpression != null)
+            {
+                minGreaterExpression = range.IsMinInclusive
                 ? Expression.GreaterThanOrEqual(propertyExpression, minConstantExpression)
                 : Expression.GreaterThan(propertyExpression, minConstantExpression);
+            }
 
-            var maxConstantExpression = Expression.Constant(range.MaxValue);
-            BinaryExpression maxLessExpression = range.IsMaxInclusive
+            ConstantExpression maxConstantExpression = null;
+
+            if (range.MaxValue.HasValue)
+            {
+                maxConstantExpression = Expression.Constant(range.MaxValue);
+            }
+
+            BinaryExpression maxLessExpression = null;
+
+            if (maxConstantExpression != null)
+            {
+                maxLessExpression = range.IsMaxInclusive
                 ? Expression.LessThanOrEqual(propertyExpression, maxConstantExpression)
                 : Expression.LessThan(propertyExpression, maxConstantExpression);
+            }
 
-            var logicExpression = Expression.And(minGreaterExpression, maxLessExpression);
+            Expression logicExpression = null;
+
+            if (minGreaterExpression != null && maxLessExpression != null)
+            {
+                logicExpression = Expression.And(minGreaterExpression, maxLessExpression);
+            }
+            else if (minGreaterExpression != null && maxLessExpression == null)
+            {
+                logicExpression = minGreaterExpression;
+            }
+            else
+            {
+                logicExpression = maxLessExpression;
+            }
 
             var callExpression = Expression.Call(
                 typeof(Queryable),

@@ -108,6 +108,36 @@ namespace RimDev.Filter.Tests.Generic
 
             public class RangeFilters : Filter
             {
+                [Theory,
+                InlineData("(,5]"),
+                InlineData("(-∞,5]")]
+                public void Should_filter_open_ended_lower_bound(string value)
+                {
+                    var @return = people.Filter(new
+                    {
+                        FavoriteNumber = RimDev.Filter.Range.Range.FromString<int>(value)
+                    });
+
+                    Assert.NotNull(@return);
+                    Assert.Equal(1, @return.Count());
+                    Assert.Equal("John", @return.First().FirstName);
+                }
+
+                [Theory,
+                InlineData("(5,]"),
+                InlineData("(5,+∞)")]
+                public void Should_filter_open_ended_upper_bound(string value)
+                {
+                    var @return = people.Filter(new
+                    {
+                        FavoriteNumber = RimDev.Filter.Range.Range.FromString<int>(value)
+                    });
+
+                    Assert.NotNull(@return);
+                    Assert.Equal(1, @return.Count());
+                    Assert.Equal("Tim", @return.First().FirstName);
+                }
+
                 [Fact]
                 public void Should_filter_for_concrete_range()
                 {
