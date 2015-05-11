@@ -15,6 +15,7 @@ namespace RimDev.Filter.Tests
                 {
                     typeof(byte),
                     typeof(char),
+                    typeof(DateTime),
                     typeof(decimal),
                     typeof(double),
                     typeof(float),
