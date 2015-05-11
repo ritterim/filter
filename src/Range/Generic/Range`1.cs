@@ -19,5 +19,25 @@
 
         public bool IsMinInclusive { get; set; }
         public bool IsMaxInclusive { get; set; }
+
+        public static implicit operator string(Range<T> range)
+        {
+            return range.ToString();
+        }
+
+        public static implicit operator Range<T>(string range)
+        {
+            return Range.FromString<T>(range) as Range<T>;
+        }
+
+        public override string ToString()
+        {
+            return string.Format("{0}{1},{2}{3}",
+                    IsMinInclusive ? "[" : "(",
+                    MinValue,
+                    MaxValue,
+                    IsMaxInclusive ? "]" : ")"
+                );
+        }
     }
 }
