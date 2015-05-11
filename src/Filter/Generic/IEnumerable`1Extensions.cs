@@ -123,18 +123,32 @@ namespace RimDev.Filter.Generic
             string property,
             IEnumerable values)
         {
-            var parameterExpression = Expression.Parameter(typeof(T), "x");
-            var propertyExpression = Expression.Property(parameterExpression, property);
-            var constantExpression = Expression.Constant(values);
-            var callExpression = Expression.Call(
-                typeof(Enumerable),
-                "Contains",
-                new[] { propertyExpression.Type },
-                constantExpression,
-                propertyExpression);
-            var lambda = Expression.Lambda<Func<T, bool>>(callExpression, parameterExpression);
+            var valuesCount = 0;
 
-            return query.Where(lambda);
+            foreach (var value in values)
+            {
+                valuesCount++;
+            }
+
+            if (valuesCount == 0)
+            {
+                return query;
+            }
+            else
+            {
+                var parameterExpression = Expression.Parameter(typeof(T), "x");
+                var propertyExpression = Expression.Property(parameterExpression, property);
+                var constantExpression = Expression.Constant(values);
+                var callExpression = Expression.Call(
+                    typeof(Enumerable),
+                    "Contains",
+                    new[] { propertyExpression.Type },
+                    constantExpression,
+                    propertyExpression);
+                var lambda = Expression.Lambda<Func<T, bool>>(callExpression, parameterExpression);
+
+                return query.Where(lambda);
+            }
         }
 
         private static IQueryable<T> Where<T>(

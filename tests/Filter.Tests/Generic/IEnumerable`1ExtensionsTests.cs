@@ -68,6 +68,18 @@ namespace RimDev.Filter.Tests.Generic
             public class EnumerableFilters : Filter
             {
                 [Fact]
+                public void Should_bypass_filter_when_empty_collection()
+                {
+                    var @return = people.Filter(new
+                    {
+                        FirstName = new string[] { }
+                    });
+
+                    Assert.NotNull(@return);
+                    Assert.Equal(2, @return.Count());
+                }
+
+                [Fact]
                 public void Should_filter_when_property_types_match_as_enumerable_string()
                 {
                     var @return = people.Filter(new
