@@ -8,6 +8,7 @@ namespace RimDev.Filter.Range
     public static class Range
     {
         public static IRange<T> FromString<T>(string value)
+            where T : struct
         {
             var range = new Range<T>();
 

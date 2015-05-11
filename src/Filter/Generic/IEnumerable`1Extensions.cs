@@ -175,6 +175,7 @@ namespace RimDev.Filter.Generic
             this IQueryable<T> query,
             string property,
             IRange<TRange> range)
+            where TRange : struct
         {
             var parameterExpression = Expression.Parameter(typeof(T), "x");
             var propertyExpression = Expression.Convert(
