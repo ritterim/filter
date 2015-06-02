@@ -21,7 +21,9 @@ namespace RimDev.Filter.Range.Tests
             [Theory,
             InlineData("(123,456)"),
             InlineData("(,456)"),
-            InlineData("(123,)")]
+            InlineData("(123,)"),
+            InlineData("123"),
+            InlineData("123,456")]
             public void Can_parse_valid_string(string value)
             {
                 var @return = Range.FromString<int>(value);
@@ -31,7 +33,12 @@ namespace RimDev.Filter.Range.Tests
 
             [Theory,
             InlineData("(123,456)", false),
-            InlineData("[123,456)", true)]
+            InlineData("[123,456)", true),
+            InlineData("123", true),
+            InlineData("(123", false),
+            InlineData("[123", true),
+            InlineData("(123,456", false),
+            InlineData("[123,456", true)]
             public void Properly_sets_minimum_inclusive_flag(
                 string parseValue,
                 bool expectedValue)
@@ -43,7 +50,13 @@ namespace RimDev.Filter.Range.Tests
 
             [Theory,
             InlineData("(123,456)", false),
-            InlineData("(123,456]", true)]
+            InlineData("(123,456]", true),
+            InlineData("123", true),
+            InlineData("(123,", true),
+            InlineData("[123", true),
+            InlineData("123,456", true),
+            InlineData("123,456]", true),
+            InlineData("123,456)", false)]
             public void Properly_sets_maximum_inclusive_flag(
                 string parseValue,
                 bool expectedValue)
@@ -51,6 +64,43 @@ namespace RimDev.Filter.Range.Tests
                 var @return = Range.FromString<int>(parseValue);
 
                 Assert.Equal(expectedValue, @return.IsMaxInclusive);
+            }
+
+            [Theory,
+            InlineData("[123", null),
+            InlineData("123,456)", 456)]
+            public void Properly_sets_maximum_value_if_not_using_short_syntax(
+                string value,
+                int? expectedMaxValue)
+            {
+                var @return = Range.FromString<int>(value);
+
+                Assert.Equal(expectedMaxValue, @return.MaxValue);
+            }
+
+            [Theory,
+            InlineData("123", 123),
+            InlineData("123,456", 456),
+            InlineData("123,", 123)]
+            public void Properly_sets_maximum_value_if_using_short_syntax(
+                string value,
+                int expectedMaxValue)
+            {
+                var @return = Range.FromString<int>(value);
+
+                Assert.Equal(expectedMaxValue, @return.MaxValue);
+            }
+
+            [Theory,
+            InlineData("123", 123),
+            InlineData(",123", null)]
+            public void Properly_sets_minimum_value_if_using_short_syntax(
+                string value,
+                int? expectedMinValue)
+            {
+                var @return = Range.FromString<int>(value);
+
+                Assert.Equal(expectedMinValue, @return.MinValue);
             }
 
             [Fact]
@@ -68,10 +118,10 @@ namespace RimDev.Filter.Range.Tests
             }
 
             [Theory,
-            InlineData("<123,456>"),
-            InlineData("{123,456)"),
-            InlineData("(123,456}")]
-            public void Throws_if_format_is_not_valid(string value)
+            InlineData("<123,456>", "parsed minimum value `<123` does not match expected type of `Int32`."),
+            InlineData("{123,456)", "parsed minimum value `{123` does not match expected type of `Int32`."),
+            InlineData("(123,456}", "parsed maximum value `456}` does not match expected type of `Int32`.")]
+            public void Throws_if_format_is_not_valid(string value, string expectedMessage)
             {
                 var exception = Assert.Throws<FormatException>(() =>
                 {
@@ -80,7 +130,7 @@ namespace RimDev.Filter.Range.Tests
 
                 Assert.NotNull(exception);
                 Assert.Equal(
-                    "value does not match expected format.",
+                    expectedMessage,
                     exception.Message);
             }
 
@@ -152,25 +202,35 @@ namespace RimDev.Filter.Range.Tests
                 Assert.Equal(5, range.MaxValue);
             }
 
-            [Fact]
-            public void Implicitly_cast_from_range_to_string()
+            public class ImplicitOperatorStringTests : RangeTests
             {
-                var range = Range.FromString<int>("[1,5]") as Range<int>;
-                string value = range;
+                [Theory,
+                InlineData("[1,5]"),
+                InlineData("1,5")]
+                public void Implicitly_cast_from_range_to_string(string value)
+                {
+                    var range = Range.FromString<int>(value) as Range<int>;
+                    string actualValue = range;
 
-                Assert.Equal("[1,5]", value);
+                    Assert.Equal("[1,5]", actualValue);
+                }
             }
 
-            [Fact]
-            public void Directly_cast_from_a_string()
+            public class ImplicitOperatorRangeTests : RangeTests
             {
-                var range = (Range<int>)"[1,5]";
+                [Theory,
+                InlineData("[1,5]"),
+                InlineData("1,5")]
+                public void Directly_cast_from_a_string(string value)
+                {
+                    var range = (Range<int>)value;
 
-                Assert.NotNull(range);
-                Assert.Equal(1, range.MinValue);
-                Assert.Equal(true, range.IsMinInclusive);
-                Assert.Equal(true, range.IsMaxInclusive);
-                Assert.Equal(5, range.MaxValue);
+                    Assert.NotNull(range);
+                    Assert.Equal(1, range.MinValue);
+                    Assert.Equal(true, range.IsMinInclusive);
+                    Assert.Equal(true, range.IsMaxInclusive);
+                    Assert.Equal(5, range.MaxValue);
+                }
             }
         }
     }
