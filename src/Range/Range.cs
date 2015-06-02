@@ -12,7 +12,22 @@ namespace RimDev.Filter.Range
         {
             var range = new Range<T>();
 
-            var parsedValue = Regex.Match(value, "([\\[\\(])(.+?)?,(.+?)?([\\]\\)])");
+            /**
+             * This expression is very cumbersome due to its requirement of handling
+             * several formats. Please take note of the lookbehind assertion and its preceeding
+             * word-boundary. The former lets us define a max-value using simple-syntax while
+             * the latter accounts for the min-value (due to the assertion).
+             * Valid formats (not exhaustive):
+             * [123,456]
+             * [123,
+             * [123,456
+             * 123
+             * 123,456
+             * 123,
+             */
+            var parsedValue = Regex.Match(
+                value + ",",
+                @"(?<startSyntax>[\[\(])?(?<minValue>[^,[(]+?)?(?:[\W])(?<=,)(?<maxValue>[^,\]\)]+)?(?<endSyntax>[\]\)])?");
 
             if (!parsedValue.Success)
             {
@@ -21,10 +36,26 @@ namespace RimDev.Filter.Range
             else
             {
                 var groups = parsedValue.Groups;
-                var parsedMinValue = groups[2].Value;
-                var parsedMaxValue = groups[3].Value;
-                var isMinInclusive = groups[1].Value == "[" ? true : false;
-                var isMaxInclusive = groups[4].Value == "]" ? true : false;
+                var parsedMinValue = groups["minValue"].Value;
+
+                /**
+                 * If we using short-range syntax, then we
+                 * want to set the max-value if not provided.
+                 */
+                var parsedMaxValue =
+                    string.IsNullOrEmpty(
+                    groups["maxValue"].Value + groups["startSyntax"].Value + groups["endSyntax"].Value)
+                    ? parsedMinValue
+                    : groups["maxValue"].Value;
+
+                var isMinInclusive =
+                    (groups["startSyntax"].Value == "[" || string.IsNullOrEmpty(groups["startSyntax"].Value))
+                    ? true
+                    : false;
+                var isMaxInclusive =
+                    (groups["endSyntax"].Value == "]" || string.IsNullOrEmpty(groups["endSyntax"].Value))
+                    ? true
+                    : false;
                 var isMinInfinite = parsedMinValue == "-∞" ? true : false;
                 var isMaxInfinite = parsedMaxValue == "+∞" ? true : false;
 
@@ -57,7 +88,7 @@ namespace RimDev.Filter.Range
                     {
                         throw new FormatException(
                             string.Format("parsed minimum value `{0}` does not match expected type of `{1}`.",
-                            groups[2].Value,
+                            groups["minValue"].Value,
                             typeof(T).Name));
                     }
                 }
@@ -72,7 +103,7 @@ namespace RimDev.Filter.Range
                     {
                         throw new FormatException(
                             string.Format("parsed maximum value `{0}` does not match expected type of `{1}`.",
-                            groups[3].Value,
+                            groups["maxValue"].Value,
                             typeof(T).Name));
                     }
                 }

@@ -127,12 +127,39 @@ Instead of having to specify both lower and upper-bound, you can truncate one of
 // x <= 5
 var range = (Range<int>)"(,5]";
 
-// range.MinValue.HasValue = false;
+// range.MinValue.HasValue == false;
 
 // or use Unicode
 
 var range2 = (Range<int>)"(-∞,5]";
 var range3 = (Range<int>)"[1,+∞)";
+```
+
+### Short-syntax version
+
+Some assumptions are made if enclosing-characters (i.e. `[`, `(`, `]`, `)`) are not used:
+
+```csharp
+var range = (Range<int>)"123";
+
+// range.MinValue == 123;
+// range.MaxValue == 123;
+// range.IsMinInclusive == true;
+// range.IsMaxInclusive == true;
+
+var range2 = (Range<int>)",456";
+
+// range2.MinValue == null;
+// range2.MaxValue == 456;
+// range2.IsMinInclusive == true;
+// range2.IsMaxInclusive == true;
+
+var range3 = (Range<int>)"(123,";
+
+// range3.MinValue == 123;
+// range3.MaxValue == 123;
+// range3.IsMinInclusive == false;
+// range3.IsMaxInclusive == true;
 ```
 
 ## Current limitations
