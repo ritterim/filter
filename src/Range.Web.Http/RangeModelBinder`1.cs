@@ -20,7 +20,7 @@ namespace RimDev.Filter.Range.Web.Http
 
             if (value == null)
             {
-                return false;
+                return true;
             }
 
             var rawValue = value.RawValue as string;
@@ -31,7 +31,7 @@ namespace RimDev.Filter.Range.Web.Http
                     bindingContext.ModelName,
                     "Invalid value-type.");
 
-                return false;
+                return true;
             }
 
             try
@@ -46,7 +46,7 @@ namespace RimDev.Filter.Range.Web.Http
                     bindingContext.ModelName,
                     ex.Message);
 
-                return false;
+                return true;
             }
         }
     }
