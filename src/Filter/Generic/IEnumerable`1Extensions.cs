@@ -137,7 +137,8 @@ namespace RimDev.Filter.Generic
             var propertyExpression = (Expression)Expression.Property(parameterExpression, property);
             var constantExpression = Expression.Constant(values);
             var propertyExpressionIsNullable =  propertyExpression.Type.IsGenericType 
-                                                && propertyExpression.Type.GetGenericTypeDefinition() == typeof (Nullable<>);
+                                                && propertyExpression.Type.GetGenericTypeDefinition() == typeof (Nullable<>)
+                                                && constantExpression.Type.GetElementType() != propertyExpression.Type;
 
             if (propertyExpressionIsNullable)
             {
