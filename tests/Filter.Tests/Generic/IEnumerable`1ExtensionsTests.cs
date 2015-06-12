@@ -111,6 +111,55 @@ namespace RimDev.Filter.Tests.Generic
                     Assert.Equal(1, @return.Count());
                     Assert.Equal("John", @return.First().FirstName);
                 }
+
+
+                [Fact]
+                public void Should_filter_multiple_properties()
+                {
+                    var @return = people.Filter(new
+                    {
+                        FirstName = "John",
+                        FavoriteNumber = 0
+                    });
+
+                    Assert.NotNull(@return);
+                    Assert.Equal(0, @return.Count());
+                }
+
+                [Fact]
+                public void Should_not_throw_if_filter_does_not_contain_valid_properties()
+                {
+                    var @return = people.Filter(new
+                    {
+                        DOESNOTEXIST = ""
+                    });
+
+                    Assert.NotNull(@return);
+                    Assert.Equal(2, @return.Count());
+                }
+
+                [Fact]
+                public void Should_not_throw_if_filter_constant_type_does_not_match()
+                {
+                    var @return = people.Filter(new
+                    {
+                        FirstName = 1
+                    });
+
+                    Assert.NotNull(@return);
+                    Assert.Equal(2, @return.Count());
+                }
+
+                [Fact]
+                public void Should_be_able_to_handle_nullable_destination_and_primitive_filter()
+                {
+                    var @return = people.Filter(new
+                    {
+                        Rating = new[] { 4.5m }
+                    });
+
+                    Assert.Equal(1, @return.Count());
+                }
             }
 
             public class RangeFilters : Filter
@@ -334,53 +383,6 @@ namespace RimDev.Filter.Tests.Generic
                 }
             }
 
-            [Fact]
-            public void Should_filter_multiple_properties()
-            {
-                var @return = people.Filter(new
-                {
-                    FirstName = "John",
-                    FavoriteNumber = 0
-                });
-
-                Assert.NotNull(@return);
-                Assert.Equal(0, @return.Count());
-            }
-
-            [Fact]
-            public void Should_not_throw_if_filter_does_not_contain_valid_properties()
-            {
-                var @return = people.Filter(new
-                {
-                    DOESNOTEXIST = ""
-                });
-
-                Assert.NotNull(@return);
-                Assert.Equal(2, @return.Count());
-            }
-
-            [Fact]
-            public void Should_not_throw_if_filter_constant_type_does_not_match()
-            {
-                var @return = people.Filter(new
-                {
-                    FirstName = 1
-                });
-
-                Assert.NotNull(@return);
-                Assert.Equal(2, @return.Count());
-            }
-
-            [Fact]
-            public void Should_be_able_to_handle_nullable_destination_and_primitive_filter()
-            {
-                var @return = people.Filter(new
-                {
-                    Rating = new[] { 4.5m }
-                });
-
-                Assert.Equal(1, @return.Count());
-            }
         }
     }
 }

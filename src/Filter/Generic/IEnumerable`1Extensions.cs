@@ -128,32 +128,39 @@ namespace RimDev.Filter.Generic
             string property,
             IEnumerable values)
         {
-            var valuesCount = 0;
-
-            foreach (var value in values)
-            {
-                valuesCount++;
-            }
-
-            if (valuesCount == 0)
+            if (values == null || !values.Cast<object>().Any())
             {
                 return query;
             }
-            else
-            {
-                var parameterExpression = Expression.Parameter(typeof(T), "x");
-                var propertyExpression = Expression.Property(parameterExpression, property);
-                var constantExpression = Expression.Constant(values);
-                var callExpression = Expression.Call(
-                    typeof(Enumerable),
-                    "Contains",
-                    new[] { propertyExpression.Type },
-                    constantExpression,
-                    propertyExpression);
-                var lambda = Expression.Lambda<Func<T, bool>>(callExpression, parameterExpression);
 
-                return query.Where(lambda);
+            var parameterExpression = Expression.Parameter(typeof(T), "x");
+            var propertyExpression = (Expression)Expression.Property(parameterExpression, property);
+            var constantExpression = Expression.Constant(values);
+            var propertyExpressionIsNullable =  propertyExpression.Type.IsGenericType 
+                                                && propertyExpression.Type.GetGenericTypeDefinition() == typeof (Nullable<>);
+
+            if (propertyExpressionIsNullable)
+            {
+                propertyExpression = Expression.Property(propertyExpression, "Value");
             }
+
+            Expression callExpression = Expression.Call(
+                typeof(Enumerable),
+                "Contains",
+                new[] { propertyExpression.Type },
+                constantExpression,
+                propertyExpression);
+
+            if (propertyExpressionIsNullable)
+            {
+                var nullablePropertyExpression = Expression.Property(parameterExpression, property);
+                var notEqual = Expression.NotEqual(nullablePropertyExpression, Expression.Constant(null, nullablePropertyExpression.Type));
+                callExpression = Expression.AndAlso(notEqual, callExpression);
+            }
+
+            var lambda = Expression.Lambda<Func<T, bool>>(callExpression, parameterExpression);
+
+            return query.Where(lambda);
         }
 
         private static IQueryable<T> Where<T>(
