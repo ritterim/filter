@@ -3,6 +3,7 @@ using RimDev.Filter.Range;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using Xunit;
 
 namespace RimDev.Filter.Tests.Generic
@@ -18,6 +19,7 @@ namespace RimDev.Filter.Tests.Generic
                 public int FavoriteNumber { get; set; }
                 public string FirstName { get; set; }
                 public string LastName { get; set; }
+                public decimal? Rating { get; set; }
             }
 
             private readonly IEnumerable<Person> people = new List<Person>()
@@ -36,7 +38,8 @@ namespace RimDev.Filter.Tests.Generic
                     FavoriteLetter = 'b',
                     FavoriteNumber = 10,
                     FirstName = "Tim",
-                    LastName = "Smith"
+                    LastName = "Smith",
+                    Rating = 4.5m
                 },
             };
 
@@ -366,6 +369,17 @@ namespace RimDev.Filter.Tests.Generic
 
                 Assert.NotNull(@return);
                 Assert.Equal(2, @return.Count());
+            }
+
+            [Fact]
+            public void Should_be_able_to_handle_nullable_destination_and_primitive_filter()
+            {
+                var @return = people.Filter(new
+                {
+                    Rating = new[] { 4.5m }
+                });
+
+                Assert.Equal(1, @return.Count());
             }
         }
     }
