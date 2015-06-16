@@ -1,9 +1,8 @@
-﻿using RimDev.Filter.Generic;
-using RimDev.Filter.Range;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
+using System.Collections.Generic;
+using RimDev.Filter.Range.Generic;
+using RimDev.Filter.Generic;
 using Xunit;
 
 namespace RimDev.Filter.Tests.Generic
@@ -12,7 +11,7 @@ namespace RimDev.Filter.Tests.Generic
     {
         public class Filter : IEnumerable_1ExtensionsTests
         {
-            private class Person
+            public class Person
             {
                 public DateTime FavoriteDate { get; set; }
                 public char FavoriteLetter { get; set; }
@@ -22,7 +21,7 @@ namespace RimDev.Filter.Tests.Generic
                 public decimal? Rating { get; set; }
             }
 
-            private readonly IEnumerable<Person> people = new List<Person>()
+            protected readonly IEnumerable<Person> People = new List<Person>()
             {
                 new Person()
                 {
@@ -42,357 +41,356 @@ namespace RimDev.Filter.Tests.Generic
                     Rating = 4.5m
                 },
             };
+        }
 
-            public class ConstantFilters : Filter
+        public class ConstantFilters : Filter
+        {
+            [Fact]
+            public void Should_filter_when_property_types_match_as_constant_string()
             {
-                [Fact]
-                public void Should_filter_when_property_types_match_as_constant_string()
+                var @return = People.Filter(new
                 {
-                    var @return = people.Filter(new
-                    {
-                        FirstName = "John"
-                    });
+                    FirstName = "John"
+                });
 
-                    Assert.NotNull(@return);
-                    Assert.Equal(1, @return.Count());
-                    Assert.Equal("John", @return.First().FirstName);
-                }
-
-                [Fact]
-                public void Should_filter_when_property_types_match_as_constant_integer()
-                {
-                    var @return = people.Filter(new
-                    {
-                        FavoriteNumber = 5
-                    });
-
-                    Assert.NotNull(@return);
-                    Assert.Equal(1, @return.Count());
-                    Assert.Equal("John", @return.First().FirstName);
-                }
-
-                [Fact]
-                public void Should_filter_multiple_properties()
-                {
-                    var @return = people.Filter(new
-                    {
-                        FirstName = "John",
-                        FavoriteNumber = 0
-                    });
-
-                    Assert.NotNull(@return);
-                    Assert.Equal(0, @return.Count());
-                }
-
-                [Fact]
-                public void Should_not_throw_if_filter_does_not_contain_valid_properties()
-                {
-                    var @return = people.Filter(new
-                    {
-                        DOESNOTEXIST = ""
-                    });
-
-                    Assert.NotNull(@return);
-                    Assert.Equal(2, @return.Count());
-                }
-
-                [Fact]
-                public void Should_not_throw_if_filter_constant_type_does_not_match()
-                {
-                    var @return = people.Filter(new
-                    {
-                        FirstName = 1
-                    });
-
-                    Assert.NotNull(@return);
-                    Assert.Equal(2, @return.Count());
-                }
+                Assert.NotNull(@return);
+                Assert.Equal(1, @return.Count());
+                Assert.Equal("John", @return.First().FirstName);
             }
 
-            public class EnumerableFilters : Filter
+            [Fact]
+            public void Should_filter_when_property_types_match_as_constant_integer()
             {
-                [Fact]
-                public void Should_bypass_filter_when_empty_collection()
+                var @return = People.Filter(new
                 {
-                    var @return = people.Filter(new
-                    {
-                        FirstName = new string[] { }
-                    });
+                    FavoriteNumber = 5
+                });
 
-                    Assert.NotNull(@return);
-                    Assert.Equal(2, @return.Count());
-                }
-
-                [Fact]
-                public void Should_filter_when_property_types_match_as_enumerable_string()
-                {
-                    var @return = people.Filter(new
-                    {
-                        FirstName = new[] { "John" }
-                    });
-
-                    Assert.NotNull(@return);
-                    Assert.Equal(1, @return.Count());
-                    Assert.Equal("John", @return.First().FirstName);
-                }
-
-                [Fact]
-                public void Should_filter_when_property_types_match_as_enumerable_integer()
-                {
-                    var @return = people.Filter(new
-                    {
-                        FavoriteNumber = new[] { 5 }
-                    });
-
-                    Assert.NotNull(@return);
-                    Assert.Equal(1, @return.Count());
-                    Assert.Equal("John", @return.First().FirstName);
-                }
-
-                [Fact]
-                public void Should_be_able_to_handle_nullable_destination_and_primitive_filter()
-                {
-                    var @return = people.Filter(new
-                    {
-                        Rating = new[] { 4.5m }
-                    });
-
-                    Assert.Equal(1, @return.Count());
-                }
-
-                [Fact]
-                public void Should_be_able_to_handle_nullable_destination_and_nullable_primitive_filter()
-                {
-                    var @return = people.Filter(new
-                    {
-                        Rating = new decimal?[] { 4.5m }
-                    });
-
-                    Assert.Equal(1, @return.Count());
-                }
+                Assert.NotNull(@return);
+                Assert.Equal(1, @return.Count());
+                Assert.Equal("John", @return.First().FirstName);
             }
 
-            public class RangeFilters : Filter
+            [Fact]
+            public void Should_filter_multiple_properties()
             {
-                [Theory,
-                InlineData("(,5]"),
-                InlineData("(-∞,5]")]
-                public void Should_filter_open_ended_lower_bound(string value)
+                var @return = People.Filter(new
                 {
-                    var @return = people.Filter(new
-                    {
-                        FavoriteNumber = RimDev.Filter.Range.Range.FromString<int>(value)
-                    });
+                    FirstName = "John",
+                    FavoriteNumber = 0
+                });
 
-                    Assert.NotNull(@return);
-                    Assert.Equal(1, @return.Count());
-                    Assert.Equal("John", @return.First().FirstName);
-                }
-
-                [Theory,
-                InlineData("(5,]"),
-                InlineData("(5,+∞)")]
-                public void Should_filter_open_ended_upper_bound(string value)
-                {
-                    var @return = people.Filter(new
-                    {
-                        FavoriteNumber = RimDev.Filter.Range.Range.FromString<int>(value)
-                    });
-
-                    Assert.NotNull(@return);
-                    Assert.Equal(1, @return.Count());
-                    Assert.Equal("Tim", @return.First().FirstName);
-                }
-
-                [Fact]
-                public void Should_filter_for_concrete_range()
-                {
-                    var @return = people.Filter(new
-                    {
-                        FavoriteNumber = new RimDev.Filter.Range.Generic.Range<int>()
-                        {
-                            MinValue = 5,
-                            MaxValue = 5,
-                            IsMinInclusive = true,
-                            IsMaxInclusive = true
-                        }
-                    });
-
-                    Assert.NotNull(@return);
-                    Assert.Equal(1, @return.Count());
-                    Assert.Equal("John", @return.First().FirstName);
-                }
-
-                [Fact]
-                public void Should_filter_when_property_types_match_as_range_byte()
-                {
-                    var @return = people.Filter(new
-                    {
-                        FavoriteNumber = RimDev.Filter.Range.Range.FromString<byte>("[5,5]")
-                    });
-
-                    Assert.NotNull(@return);
-                    Assert.Equal(1, @return.Count());
-                    Assert.Equal("John", @return.First().FirstName);
-                }
-
-                [Fact]
-                public void Should_filter_when_property_types_match_as_range_char()
-                {
-                    var @return = people.Filter(new
-                    {
-                        FavoriteLetter = RimDev.Filter.Range.Range.FromString<char>("[a,b)")
-                    });
-
-                    Assert.NotNull(@return);
-                    Assert.Equal(1, @return.Count());
-                    Assert.Equal("John", @return.First().FirstName);
-                }
-
-                [Fact]
-                public void Should_filter_when_property_types_match_as_range_datetime()
-                {
-                    var @return = people.Filter(new
-                    {
-                        FavoriteDate = RimDev.Filter.Range.Range.FromString<DateTime>("[2000-01-01,2000-01-02)")
-                    });
-
-                    Assert.NotNull(@return);
-                    Assert.Equal(1, @return.Count());
-                    Assert.Equal("John", @return.First().FirstName);
-                }
-
-                [Fact]
-                public void Should_filter_when_property_types_match_as_range_decimal()
-                {
-                    var @return = people.Filter(new
-                    {
-                        FavoriteNumber = RimDev.Filter.Range.Range.FromString<decimal>("[4.5,5]")
-                    });
-
-                    Assert.NotNull(@return);
-                    Assert.Equal(1, @return.Count());
-                    Assert.Equal("John", @return.First().FirstName);
-                }
-
-                [Fact]
-                public void Should_filter_when_property_types_match_as_range_double()
-                {
-                    var @return = people.Filter(new
-                    {
-                        FavoriteNumber = RimDev.Filter.Range.Range.FromString<double>("[4.5,5]")
-                    });
-
-                    Assert.NotNull(@return);
-                    Assert.Equal(1, @return.Count());
-                    Assert.Equal("John", @return.First().FirstName);
-                }
-
-                [Fact]
-                public void Should_filter_when_property_types_match_as_range_float()
-                {
-                    var @return = people.Filter(new
-                    {
-                        FavoriteNumber = RimDev.Filter.Range.Range.FromString<float>("[4.5,5]")
-                    });
-
-                    Assert.NotNull(@return);
-                    Assert.Equal(1, @return.Count());
-                    Assert.Equal("John", @return.First().FirstName);
-                }
-
-                [Fact]
-                public void Should_filter_when_property_types_match_as_range_int()
-                {
-                    var @return = people.Filter(new
-                    {
-                        FavoriteNumber = RimDev.Filter.Range.Range.FromString<int>("[5,5]")
-                    });
-
-                    Assert.NotNull(@return);
-                    Assert.Equal(1, @return.Count());
-                    Assert.Equal("John", @return.First().FirstName);
-                }
-
-                [Fact]
-                public void Should_filter_when_property_types_match_as_range_long()
-                {
-                    var @return = people.Filter(new
-                    {
-                        FavoriteNumber = RimDev.Filter.Range.Range.FromString<long>("[5,5]")
-                    });
-
-                    Assert.NotNull(@return);
-                    Assert.Equal(1, @return.Count());
-                    Assert.Equal("John", @return.First().FirstName);
-                }
-
-                [Fact]
-                public void Should_filter_when_property_types_match_as_range_sbyte()
-                {
-                    var @return = people.Filter(new
-                    {
-                        FavoriteNumber = RimDev.Filter.Range.Range.FromString<sbyte>("[5,5]")
-                    });
-
-                    Assert.NotNull(@return);
-                    Assert.Equal(1, @return.Count());
-                    Assert.Equal("John", @return.First().FirstName);
-                }
-
-                [Fact]
-                public void Should_filter_when_property_types_match_as_range_short()
-                {
-                    var @return = people.Filter(new
-                    {
-                        FavoriteNumber = RimDev.Filter.Range.Range.FromString<short>("[5,5]")
-                    });
-
-                    Assert.NotNull(@return);
-                    Assert.Equal(1, @return.Count());
-                    Assert.Equal("John", @return.First().FirstName);
-                }
-
-                [Fact]
-                public void Should_filter_when_property_types_match_as_range_uint()
-                {
-                    var @return = people.Filter(new
-                    {
-                        FavoriteNumber = RimDev.Filter.Range.Range.FromString<uint>("[5,5]")
-                    });
-
-                    Assert.NotNull(@return);
-                    Assert.Equal(1, @return.Count());
-                    Assert.Equal("John", @return.First().FirstName);
-                }
-
-                [Fact]
-                public void Should_filter_when_property_types_match_as_range_ulong()
-                {
-                    var @return = people.Filter(new
-                    {
-                        FavoriteNumber = RimDev.Filter.Range.Range.FromString<ulong>("[5,5]")
-                    });
-
-                    Assert.NotNull(@return);
-                    Assert.Equal(1, @return.Count());
-                    Assert.Equal("John", @return.First().FirstName);
-                }
-
-                [Fact]
-                public void Should_filter_when_property_types_match_as_range_ushort()
-                {
-                    var @return = people.Filter(new
-                    {
-                        FavoriteNumber = RimDev.Filter.Range.Range.FromString<ushort>("[5,5]")
-                    });
-
-                    Assert.NotNull(@return);
-                    Assert.Equal(1, @return.Count());
-                    Assert.Equal("John", @return.First().FirstName);
-                }
+                Assert.NotNull(@return);
+                Assert.Equal(0, @return.Count());
             }
 
+            [Fact]
+            public void Should_not_throw_if_filter_does_not_contain_valid_properties()
+            {
+                var @return = People.Filter(new
+                {
+                    DOESNOTEXIST = ""
+                });
+
+                Assert.NotNull(@return);
+                Assert.Equal(2, @return.Count());
+            }
+
+            [Fact]
+            public void Should_not_throw_if_filter_constant_type_does_not_match()
+            {
+                var @return = People.Filter(new
+                {
+                    FirstName = 1
+                });
+
+                Assert.NotNull(@return);
+                Assert.Equal(2, @return.Count());
+            }
+        }
+
+        public class EnumerableFilters : Filter
+        {
+            [Fact]
+            public void Should_bypass_filter_when_empty_collection()
+            {
+                var @return = People.Filter(new
+                {
+                    FirstName = new string[] { }
+                });
+
+                Assert.NotNull(@return);
+                Assert.Equal(2, @return.Count());
+            }
+
+            [Fact]
+            public void Should_filter_when_property_types_match_as_enumerable_string()
+            {
+                var @return = People.Filter(new
+                {
+                    FirstName = new[] { "John" }
+                });
+
+                Assert.NotNull(@return);
+                Assert.Equal(1, @return.Count());
+                Assert.Equal("John", @return.First().FirstName);
+            }
+
+            [Fact]
+            public void Should_filter_when_property_types_match_as_enumerable_integer()
+            {
+                var @return = People.Filter(new
+                {
+                    FavoriteNumber = new[] { 5 }
+                });
+
+                Assert.NotNull(@return);
+                Assert.Equal(1, @return.Count());
+                Assert.Equal("John", @return.First().FirstName);
+            }
+
+            [Fact]
+            public void Should_be_able_to_handle_nullable_destination_and_primitive_filter()
+            {
+                var @return = People.Filter(new
+                {
+                    Rating = new[] { 4.5m }
+                });
+
+                Assert.Equal(1, @return.Count());
+            }
+
+            [Fact]
+            public void Should_be_able_to_handle_nullable_destination_and_nullable_primitive_filter()
+            {
+                var @return = People.Filter(new
+                {
+                    Rating = new decimal?[] { 4.5m }
+                });
+
+                Assert.Equal(1, @return.Count());
+            }
+        }
+
+        public class RangeFilters : Filter
+        {
+            [Theory,
+            InlineData("(,5]"),
+            InlineData("(-∞,5]")]
+            public void Should_filter_open_ended_lower_bound(string value)
+            {
+                var @return = People.Filter(new
+                {
+                    FavoriteNumber = Range.Range.FromString<int>(value)
+                });
+
+                Assert.NotNull(@return);
+                Assert.Equal(1, @return.Count());
+                Assert.Equal("John", @return.First().FirstName);
+            }
+
+            [Theory,
+            InlineData("(5,]"),
+            InlineData("(5,+∞)")]
+            public void Should_filter_open_ended_upper_bound(string value)
+            {
+                var @return = People.Filter(new
+                {
+                    FavoriteNumber = Range.Range.FromString<int>(value)
+                });
+
+                Assert.NotNull(@return);
+                Assert.Equal(1, @return.Count());
+                Assert.Equal("Tim", @return.First().FirstName);
+            }
+
+            [Fact]
+            public void Should_filter_for_concrete_range()
+            {
+                var @return = People.Filter(new
+                {
+                    FavoriteNumber = new Range<int>()
+                    {
+                        MinValue = 5,
+                        MaxValue = 5,
+                        IsMinInclusive = true,
+                        IsMaxInclusive = true
+                    }
+                });
+
+                Assert.NotNull(@return);
+                Assert.Equal(1, @return.Count());
+                Assert.Equal("John", @return.First().FirstName);
+            }
+
+            [Fact]
+            public void Should_filter_when_property_types_match_as_range_byte()
+            {
+                var @return = People.Filter(new
+                {
+                    FavoriteNumber = Range.Range.FromString<byte>("[5,5]")
+                });
+
+                Assert.NotNull(@return);
+                Assert.Equal(1, @return.Count());
+                Assert.Equal("John", @return.First().FirstName);
+            }
+
+            [Fact]
+            public void Should_filter_when_property_types_match_as_range_char()
+            {
+                var @return = People.Filter(new
+                {
+                    FavoriteLetter = Range.Range.FromString<char>("[a,b)")
+                });
+
+                Assert.NotNull(@return);
+                Assert.Equal(1, @return.Count());
+                Assert.Equal("John", @return.First().FirstName);
+            }
+
+            [Fact]
+            public void Should_filter_when_property_types_match_as_range_datetime()
+            {
+                var @return = People.Filter(new
+                {
+                    FavoriteDate = Range.Range.FromString<DateTime>("[2000-01-01,2000-01-02)")
+                });
+
+                Assert.NotNull(@return);
+                Assert.Equal(1, @return.Count());
+                Assert.Equal("John", @return.First().FirstName);
+            }
+
+            [Fact]
+            public void Should_filter_when_property_types_match_as_range_decimal()
+            {
+                var @return = People.Filter(new
+                {
+                    FavoriteNumber = Range.Range.FromString<decimal>("[4.5,5]")
+                });
+
+                Assert.NotNull(@return);
+                Assert.Equal(1, @return.Count());
+                Assert.Equal("John", @return.First().FirstName);
+            }
+
+            [Fact]
+            public void Should_filter_when_property_types_match_as_range_double()
+            {
+                var @return = People.Filter(new
+                {
+                    FavoriteNumber = Range.Range.FromString<double>("[4.5,5]")
+                });
+
+                Assert.NotNull(@return);
+                Assert.Equal(1, @return.Count());
+                Assert.Equal("John", @return.First().FirstName);
+            }
+
+            [Fact]
+            public void Should_filter_when_property_types_match_as_range_float()
+            {
+                var @return = People.Filter(new
+                {
+                    FavoriteNumber = Range.Range.FromString<float>("[4.5,5]")
+                });
+
+                Assert.NotNull(@return);
+                Assert.Equal(1, @return.Count());
+                Assert.Equal("John", @return.First().FirstName);
+            }
+
+            [Fact]
+            public void Should_filter_when_property_types_match_as_range_int()
+            {
+                var @return = People.Filter(new
+                {
+                    FavoriteNumber = Range.Range.FromString<int>("[5,5]")
+                });
+
+                Assert.NotNull(@return);
+                Assert.Equal(1, @return.Count());
+                Assert.Equal("John", @return.First().FirstName);
+            }
+
+            [Fact]
+            public void Should_filter_when_property_types_match_as_range_long()
+            {
+                var @return = People.Filter(new
+                {
+                    FavoriteNumber = Range.Range.FromString<long>("[5,5]")
+                });
+
+                Assert.NotNull(@return);
+                Assert.Equal(1, @return.Count());
+                Assert.Equal("John", @return.First().FirstName);
+            }
+
+            [Fact]
+            public void Should_filter_when_property_types_match_as_range_sbyte()
+            {
+                var @return = People.Filter(new
+                {
+                    FavoriteNumber = Range.Range.FromString<sbyte>("[5,5]")
+                });
+
+                Assert.NotNull(@return);
+                Assert.Equal(1, @return.Count());
+                Assert.Equal("John", @return.First().FirstName);
+            }
+
+            [Fact]
+            public void Should_filter_when_property_types_match_as_range_short()
+            {
+                var @return = People.Filter(new
+                {
+                    FavoriteNumber = Range.Range.FromString<short>("[5,5]")
+                });
+
+                Assert.NotNull(@return);
+                Assert.Equal(1, @return.Count());
+                Assert.Equal("John", @return.First().FirstName);
+            }
+
+            [Fact]
+            public void Should_filter_when_property_types_match_as_range_uint()
+            {
+                var @return = People.Filter(new
+                {
+                    FavoriteNumber = Range.Range.FromString<uint>("[5,5]")
+                });
+
+                Assert.NotNull(@return);
+                Assert.Equal(1, @return.Count());
+                Assert.Equal("John", @return.First().FirstName);
+            }
+
+            [Fact]
+            public void Should_filter_when_property_types_match_as_range_ulong()
+            {
+                var @return = People.Filter(new
+                {
+                    FavoriteNumber = Range.Range.FromString<ulong>("[5,5]")
+                });
+
+                Assert.NotNull(@return);
+                Assert.Equal(1, @return.Count());
+                Assert.Equal("John", @return.First().FirstName);
+            }
+
+            [Fact]
+            public void Should_filter_when_property_types_match_as_range_ushort()
+            {
+                var @return = People.Filter(new
+                {
+                    FavoriteNumber = Range.Range.FromString<ushort>("[5,5]")
+                });
+
+                Assert.NotNull(@return);
+                Assert.Equal(1, @return.Count());
+                Assert.Equal("John", @return.First().FirstName);
+            }
         }
     }
 }
