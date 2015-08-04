@@ -140,7 +140,7 @@ namespace RimDev.Filter.Generic
             {
                 return query;
             }
-            // if null : x => query
+
             var parameterExpression = Expression.Parameter(typeof(T), "x");
             var propertyExpression = (Expression)Expression.Property(parameterExpression, property);
             var constantExpression = Expression.Constant(values);
@@ -209,7 +209,7 @@ namespace RimDev.Filter.Generic
                     ? Expression.Convert(minValueExpression, propertyExpression.Type)
                     : (Expression)minValueExpression;
             }
-            
+
             BinaryExpression minGreaterExpression = null;
 
             if (minConstantExpression != null)
