@@ -1,5 +1,6 @@
 ﻿using RimDev.Automation.Sql;
 using RimDev.Filter.Generic;
+using RimDev.Filter.Range.Generic;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
@@ -43,9 +44,29 @@ namespace RimDev.Filter.Tests.Generic.Integration
                     context.People.AddRange(People);
                     context.SaveChanges();
 
-                    var @return = People.Filter(new
+                    var @return = context.People.Filter(new
                     {
                         Rating = new decimal?(4.5m)
+                    });
+
+                    Assert.Equal(1, @return.Count());
+                }
+            }
+        }
+
+        [Fact]
+        public void Should_be_able_to_handle_nullable_source()
+        {
+            using (var database = new LocalDb())
+            {
+                using (var context = new FilterDbContext(database.ConnectionString))
+                {
+                    context.People.AddRange(People);
+                    context.SaveChanges();
+
+                    var @return = context.People.Filter(new
+                    {
+                        Rating = (Range<decimal>)"[4.5,5.0]"
                     });
 
                     Assert.Equal(1, @return.Count());
