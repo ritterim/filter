@@ -425,7 +425,7 @@ namespace RimDev.Filter.Tests.Generic
                     Rating = (Range<decimal>)"[4.5,5.0]"
                 });
 
-                Assert.Equal(0, @return.Count());
+                Assert.Equal(1, @return.Count());
             }
         }
     }
