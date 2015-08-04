@@ -198,15 +198,16 @@ namespace RimDev.Filter.Generic
             where TRange : struct
         {
             var parameterExpression = Expression.Parameter(typeof(T), "x");
-            var propertyExpression = Expression.Convert(
-                Expression.Property(parameterExpression, property),
-                typeof(TRange));
+            var propertyExpression = Expression.Property(parameterExpression, property);
 
-            ConstantExpression minConstantExpression = null;
+            Expression minConstantExpression = null;
 
             if (range.MinValue.HasValue)
             {
-                minConstantExpression = Expression.Constant(range.MinValue);
+                var minValueExpression = Expression.Constant(range.MinValue);
+                minConstantExpression = minValueExpression.Type != propertyExpression.Type
+                    ? Expression.Convert(minValueExpression, propertyExpression.Type)
+                    : (Expression)minValueExpression;
             }
 
             BinaryExpression minGreaterExpression = null;
@@ -218,11 +219,14 @@ namespace RimDev.Filter.Generic
                 : Expression.GreaterThan(propertyExpression, minConstantExpression);
             }
 
-            ConstantExpression maxConstantExpression = null;
+            Expression maxConstantExpression = null;
 
             if (range.MaxValue.HasValue)
             {
-                maxConstantExpression = Expression.Constant(range.MaxValue);
+                var maxValueExpression = Expression.Constant(range.MaxValue);
+                maxConstantExpression = maxValueExpression.Type != propertyExpression.Type
+                    ? Expression.Convert(maxValueExpression, propertyExpression.Type)
+                    : (Expression)maxValueExpression;
             }
 
             BinaryExpression maxLessExpression = null;
@@ -249,12 +253,13 @@ namespace RimDev.Filter.Generic
                 logicExpression = maxLessExpression;
             }
 
+            var lambdaExpression = Expression.Lambda<Func<T, bool>>(logicExpression, parameterExpression);
             var callExpression = Expression.Call(
                 typeof(Queryable),
                 "Where",
                 new[] { query.ElementType },
                 query.Expression,
-                Expression.Lambda<Func<T, bool>>(logicExpression, new[] { parameterExpression }));
+                lambdaExpression);
 
             return query.Provider.CreateQuery<T>(callExpression);
         }
