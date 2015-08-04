@@ -181,6 +181,20 @@ namespace RimDev.Filter.Tests.Generic
 
                 Assert.Equal(1, @return.Count());
             }
+
+            [Fact]
+            public void Should_be_able_to_handle_nullable_source()
+            {
+                var people = People.ToList();
+                people.ForEach(x => x.Rating = null);
+
+                var @return = people.Filter(new
+                {
+                    Rating = new decimal?[] { 4.5m }
+                });
+
+                Assert.Equal(0, @return.Count());
+            }
         }
 
         public class RangeFilters : Filter
@@ -401,6 +415,17 @@ namespace RimDev.Filter.Tests.Generic
                 Assert.NotNull(@return);
                 Assert.Equal(1, @return.Count());
                 Assert.Equal("John", @return.First().FirstName);
+            }
+
+            [Fact]
+            public void Should_be_able_to_handle_nullable_source()
+            {
+                var @return = People.Filter(new
+                {
+                    Rating = (Range<decimal>)"[4.5,5.0]"
+                });
+
+                Assert.Equal(0, @return.Count());
             }
         }
     }
