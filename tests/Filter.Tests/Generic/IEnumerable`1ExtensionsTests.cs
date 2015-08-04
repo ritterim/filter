@@ -161,11 +161,22 @@ namespace RimDev.Filter.Tests.Generic
             }
 
             [Fact]
-            public void Should_be_able_to_handle_nullable_destination_and_nullable_primitive_filter()
+            public void Should_be_able_to_handle_nullable_destination_and_nullable_primitive_filter_as_collection()
             {
                 var @return = People.Filter(new
                 {
                     Rating = new decimal?[] { 4.5m }
+                });
+
+                Assert.Equal(1, @return.Count());
+            }
+
+            [Fact]
+            public void Should_be_able_to_handle_nullable_destination_and_nullable_primitive_filter()
+            {
+                var @return = People.Filter(new
+                {
+                    Rating = new decimal?(4.5m)
                 });
 
                 Assert.Equal(1, @return.Count());

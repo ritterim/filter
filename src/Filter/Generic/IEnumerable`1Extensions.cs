@@ -111,7 +111,15 @@ namespace RimDev.Filter.Generic
                         {
                             try
                             {
-                                queryableValue = queryableValue.Where(validValuePropertyName, filterPropertyValue);
+                                if (validValueProperty.PropertyType.IsGenericType &&
+                                    validValueProperty.PropertyType.GetGenericTypeDefinition() == typeof(Nullable<>))
+                                {
+                                    queryableValue = queryableValue.Where(validValuePropertyName, filterPropertyValue as Nullable);
+                                }
+                                else
+                                {
+                                    queryableValue = queryableValue.Where(validValuePropertyName, filterPropertyValue);
+                                }
                             }
                             catch (Exception)
                             { }
@@ -136,7 +144,7 @@ namespace RimDev.Filter.Generic
             var parameterExpression = Expression.Parameter(typeof(T), "x");
             var propertyExpression = (Expression)Expression.Property(parameterExpression, property);
             var constantExpression = Expression.Constant(values);
-            var propertyExpressionIsNullable =  propertyExpression.Type.IsGenericType 
+            var propertyExpressionIsNullable =  propertyExpression.Type.IsGenericType
                                                 && propertyExpression.Type.GetGenericTypeDefinition() == typeof (Nullable<>)
                                                 && constantExpression.Type.GetElementType() != propertyExpression.Type;
 
