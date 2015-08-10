@@ -42,6 +42,7 @@
   <ItemGroup>
     <Compile Include="Filter.cs" />
     <Compile Include="Generic\IEnumerable`1Extensions.cs" />
+    <Compile Include="Generic\IQueryable`1Extensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
