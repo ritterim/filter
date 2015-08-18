@@ -19,6 +19,7 @@ namespace RimDev.Filter.Tests.Generic
                 public string FirstName { get; set; }
                 public string LastName { get; set; }
                 public decimal? Rating { get; set; }
+                public bool? IsGreat { get; set; }
             }
 
             protected readonly IEnumerable<Person> People = new List<Person>()
@@ -29,7 +30,8 @@ namespace RimDev.Filter.Tests.Generic
                     FavoriteLetter = 'a',
                     FavoriteNumber = 5,
                     FirstName = "John",
-                    LastName = "Doe"
+                    LastName = "Doe",
+                    IsGreat = null
                 },
                 new Person()
                 {
@@ -38,7 +40,8 @@ namespace RimDev.Filter.Tests.Generic
                     FavoriteNumber = 10,
                     FirstName = "Tim",
                     LastName = "Smith",
-                    Rating = 4.5m
+                    Rating = 4.5m,
+                    IsGreat = true
                 },
             };
         }
@@ -106,6 +109,19 @@ namespace RimDev.Filter.Tests.Generic
 
                 Assert.NotNull(@return);
                 Assert.Equal(2, @return.Count());
+            }
+
+            [Fact]
+            public void Should_filter_on_nullable_booleans()
+            {
+                var @return = People.Filter(new
+                {
+                    IsGreat = true
+                });
+
+                Assert.NotNull(@return);
+                Assert.Equal(1, @return.Count());
+                Assert.Equal("Tim", @return.First().FirstName);
             }
         }
 
