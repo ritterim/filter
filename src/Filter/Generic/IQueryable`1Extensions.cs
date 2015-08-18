@@ -106,15 +106,10 @@ namespace RimDev.Filter.Generic
                     {
                         try
                         {
-                            if (validValueProperty.PropertyType.IsGenericType &&
-                                validValueProperty.PropertyType.GetGenericTypeDefinition() == typeof(Nullable<>))
-                            {
-                                queryableValue = queryableValue.Where(validValuePropertyName, filterPropertyValue as Nullable);
-                            }
-                            else
-                            {
-                                queryableValue = queryableValue.Where(validValuePropertyName, filterPropertyValue);
-                            }
+                            var propertyType = Nullable.GetUnderlyingType(validValueProperty.PropertyType) ??
+                                               validValueProperty.PropertyType;
+
+                            queryableValue = queryableValue.Where(validValuePropertyName, propertyType, filterPropertyValue);
                         }
                         catch (Exception) { }
                     }
@@ -168,18 +163,25 @@ namespace RimDev.Filter.Generic
         private static IQueryable<T> Where<T>(
             this IQueryable<T> query,
             string property,
+            Type valueType,
             object value)
         {
             var parameterExpression = Expression.Parameter(typeof(T), "x");
             var propertyExpression = Expression.Property(parameterExpression, property);
-            var constantExpression = Expression.Constant(value);
-            var equalExpression = Expression.Equal(propertyExpression, constantExpression);
+
+            var constantExpression = Expression.Constant(value, valueType);
+            var comparandExpression = Nullable.GetUnderlyingType(propertyExpression.Type) != null
+                ? Expression.Convert(constantExpression, propertyExpression.Type)
+                : (Expression)constantExpression;
+
+            var equalExpression = Expression.Equal(propertyExpression, comparandExpression);
+            var lambdaExpression = Expression.Lambda<Func<T, bool>>(equalExpression, parameterExpression);
             var callExpression = Expression.Call(
                 typeof(Queryable),
                 "Where",
                 new[] { query.ElementType },
                 query.Expression,
-                Expression.Lambda<Func<T, bool>>(equalExpression, parameterExpression));
+                lambdaExpression);
 
             return query.Provider.CreateQuery<T>(callExpression);
         }
