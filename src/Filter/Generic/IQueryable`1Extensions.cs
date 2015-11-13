@@ -1,5 +1,6 @@
-﻿using System;
+using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -39,7 +40,33 @@ namespace RimDev.Filter.Generic
                     if (typeof(IEnumerable).IsAssignableFrom(filterProperty.PropertyType) &&
                         filterProperty.PropertyType != typeof(string))
                     {
-                        queryableValue = queryableValue.Contains(validValuePropertyName, (IEnumerable)filterPropertyValue);
+                        object firstItem = null;
+                        if (typeof(ICollection).IsAssignableFrom(filterProperty.PropertyType) &&
+                            ((ICollection)filterPropertyValue).Count == 1)
+                        {
+                            Array array;
+                            if (filterProperty.PropertyType.IsArray)
+                            {
+                                array = (Array)filterPropertyValue;
+                            }
+                            else
+                            {
+                                array = new object[1];
+                                ((ICollection)filterPropertyValue).CopyTo(array, 0);
+                            }
+
+                            firstItem = array.GetValue(0);
+                            if (firstItem != null)
+                            {
+                                var underlyingType = Nullable.GetUnderlyingType(
+                                    TypeSystem.GetElementType(validValueProperty.PropertyType)) ?? validValueProperty.PropertyType;
+
+                                queryableValue = queryableValue.Where(validValuePropertyName, underlyingType, firstItem);
+                            }
+                        }
+                        
+                        if (firstItem == null)
+                            queryableValue = queryableValue.Contains(validValuePropertyName, (IEnumerable)filterPropertyValue);
                     }
                     else if (filterProperty.PropertyType.IsGenericType &&
                         typeof(IRange<>).IsAssignableFrom(filterProperty.PropertyType.GetGenericTypeDefinition()) ||
@@ -257,6 +284,57 @@ namespace RimDev.Filter.Generic
                 lambdaExpression);
 
             return query.Provider.CreateQuery<T>(callExpression);
+        }
+
+        /**
+         * The guy who wrote LINQ wrote the code below. LINQ seems to be doing ok, so I trust it.
+         * http://blogs.msdn.com/b/mattwar/archive/2007/07/30/linq-building-an-iqueryable-provider-part-i.aspx
+         */
+        private static class TypeSystem
+        {
+            internal static Type GetElementType(Type seqType)
+            {
+                var ienum = FindIEnumerable(seqType);
+                return ienum == null ? seqType : ienum.GetGenericArguments()[0];
+            }
+
+            private static Type FindIEnumerable(Type seqType)
+            {
+                if (seqType == null || seqType == typeof(string))
+                    return null;
+
+                if (seqType.IsArray)
+                    return typeof(IEnumerable<>).MakeGenericType(seqType.GetElementType());
+
+                if (seqType.IsGenericType)
+                {
+                    foreach (var arg in seqType.GetGenericArguments())
+                    {
+                        var ienum = typeof(IEnumerable<>).MakeGenericType(arg);
+                        if (ienum.IsAssignableFrom(seqType))
+                        {
+                            return ienum;
+                        }
+                    }
+                }
+
+                var ifaces = seqType.GetInterfaces();
+                if (ifaces.Length > 0)
+                {
+                    foreach (var iface in ifaces)
+                    {
+                        var ienum = FindIEnumerable(iface);
+                        if (ienum != null) return ienum;
+                    }
+                }
+
+                if (seqType.BaseType != null && seqType.BaseType != typeof(object))
+                {
+                    return FindIEnumerable(seqType.BaseType);
+                }
+
+                return null;
+            }
         }
     }
 }

@@ -80,6 +80,102 @@ namespace RimDev.Filter.Tests.Generic.Integration
             }
         }
 
+        [Fact]
+        public void Should_not_optimize_arrays_containing_multiple_values()
+        {
+            var singleParameter = new
+            {
+                FirstName = "Tim"
+            };
+
+            var collectionParameter = new
+            {
+                FirstName = new[] { "Tim", "John" }
+            };
+
+            using (var context = new FilterDbContext(fixture.ConnectionString))
+            {
+                IQueryable<Person> query = context.People.AsNoTracking();
+
+                var expectedQuery = query.Filter(singleParameter);
+                var actualQuery = query.Filter(collectionParameter);
+
+                Assert.NotEqual(expectedQuery.ToString(), actualQuery.ToString(), StringComparer.OrdinalIgnoreCase);
+            }
+        }
+
+        [Fact]
+        public void Should_optimize_arrays_containing_a_single_value()
+        {
+            var singleParameter = new
+            {
+                FirstName = "Tim"
+            };
+
+            var collectionParameter = new
+            {
+                FirstName = new[] { "Tim" }
+            };
+
+            using (var context = new FilterDbContext(fixture.ConnectionString))
+            {
+                IQueryable<Person> query = context.People.AsNoTracking();
+
+                var expectedQuery = query.Filter(singleParameter);
+                var actualQuery = query.Filter(collectionParameter);
+
+                Assert.Equal(expectedQuery.ToString(), actualQuery.ToString(), StringComparer.OrdinalIgnoreCase);
+            }
+        }
+
+        [Fact]
+        public void Should_not_optimize_collections_containing_multiple_values()
+        {
+            var singleParameter = new
+            {
+                FirstName = "Tim"
+            };
+
+            var collectionParameter = new
+            {
+                FirstName = new List<string> { "Tim", "John" }
+            };
+
+            using (var context = new FilterDbContext(fixture.ConnectionString))
+            {
+                IQueryable<Person> query = context.People.AsNoTracking();
+
+                var expectedQuery = query.Filter(singleParameter);
+                var actualQuery = query.Filter(collectionParameter);
+
+                Assert.NotEqual(expectedQuery.ToString(), actualQuery.ToString(), StringComparer.OrdinalIgnoreCase);
+            }
+        }
+
+        [Fact]
+        public void Should_optimize_collections_containing_a_single_value()
+        {
+            var singleParameter = new
+            {
+                FirstName = "Tim"
+            };
+
+            var collectionParameter = new
+            {
+                FirstName = new List<string> { "Tim" }
+            };
+
+            using (var context = new FilterDbContext(fixture.ConnectionString))
+            {
+                IQueryable<Person> query = context.People.AsNoTracking();
+
+                var expectedQuery = query.Filter(singleParameter);
+                var actualQuery = query.Filter(collectionParameter);
+
+                Assert.Equal(expectedQuery.ToString(), actualQuery.ToString(), StringComparer.OrdinalIgnoreCase);
+            }
+        }
+
         public sealed class FilterDbContext : DbContext
         {
             public FilterDbContext(string nameOrConnectionString)
