@@ -1,4 +1,3 @@
-﻿using RimDev.Automation.Sql;
 using RimDev.Filter.Generic;
 using RimDev.Filter.Range.Generic;
 using System;
@@ -9,9 +8,16 @@ using Xunit;
 
 namespace RimDev.Filter.Tests.Generic.Integration
 {
-    public class EfTests
+    public class EfTests : IClassFixture<DatabaseFixture>
     {
-        private readonly IEnumerable<Person> People = new List<Person>()
+        private readonly DatabaseFixture fixture;
+
+        public EfTests(DatabaseFixture databaseFixture)
+        {
+            fixture = databaseFixture;
+        }
+
+        private readonly IEnumerable<Person> People = new[]
         {
             new Person()
             {
@@ -37,53 +43,145 @@ namespace RimDev.Filter.Tests.Generic.Integration
         {
             Database.SetInitializer(new DropCreateDatabaseAlways<FilterDbContext>());
 
-            using (var database = new LocalDb())
+            using (var context = new FilterDbContext(fixture.ConnectionString))
+            using (var transaction = context.Database.BeginTransaction())
             {
-                using (var context = new FilterDbContext(database.ConnectionString))
+                context.People.AddRange(People);
+                context.SaveChanges();
+
+                var @return = context.People.Filter(new
                 {
-                    context.People.AddRange(People);
-                    context.SaveChanges();
+                    Rating = new decimal?(4.5m)
+                });
 
-                    var @return = context.People.Filter(new
-                    {
-                        Rating = new decimal?(4.5m)
-                    });
+                Assert.Equal(1, @return.Count());
 
-                    Assert.Equal(1, @return.Count());
-                }
+                transaction.Rollback();
             }
         }
 
         [Fact]
         public void Should_be_able_to_handle_nullable_source()
         {
-            using (var database = new LocalDb())
+            using (var context = new FilterDbContext(fixture.ConnectionString))
+            using (var transaction = context.Database.BeginTransaction())
             {
-                using (var context = new FilterDbContext(database.ConnectionString))
+                context.People.AddRange(People);
+                context.SaveChanges();
+
+                var @return = context.People.Filter(new
                 {
-                    context.People.AddRange(People);
-                    context.SaveChanges();
+                    Rating = (Range<decimal>)"[4.5,5.0]"
+                });
 
-                    var @return = context.People.Filter(new
-                    {
-                        Rating = (Range<decimal>)"[4.5,5.0]"
-                    });
+                Assert.Equal(1, @return.Count());
 
-                    Assert.Equal(1, @return.Count());
-                }
+                transaction.Rollback();
             }
         }
 
-        public class FilterDbContext : DbContext
+        [Fact]
+        public void Should_not_optimize_arrays_containing_multiple_values()
+        {
+            var singleParameter = new
+            {
+                FirstName = "Tim"
+            };
+
+            var collectionParameter = new
+            {
+                FirstName = new[] { "Tim", "John" }
+            };
+
+            using (var context = new FilterDbContext(fixture.ConnectionString))
+            {
+                IQueryable<Person> query = context.People.AsNoTracking();
+
+                var expectedQuery = query.Filter(singleParameter);
+                var actualQuery = query.Filter(collectionParameter);
+
+                Assert.NotEqual(expectedQuery.ToString(), actualQuery.ToString(), StringComparer.OrdinalIgnoreCase);
+            }
+        }
+
+        [Fact]
+        public void Should_optimize_arrays_containing_a_single_value()
+        {
+            var singleParameter = new
+            {
+                FirstName = "Tim"
+            };
+
+            var collectionParameter = new
+            {
+                FirstName = new[] { "Tim" }
+            };
+
+            using (var context = new FilterDbContext(fixture.ConnectionString))
+            {
+                IQueryable<Person> query = context.People.AsNoTracking();
+
+                var expectedQuery = query.Filter(singleParameter);
+                var actualQuery = query.Filter(collectionParameter);
+
+                Assert.Equal(expectedQuery.ToString(), actualQuery.ToString(), StringComparer.OrdinalIgnoreCase);
+            }
+        }
+
+        [Fact]
+        public void Should_not_optimize_collections_containing_multiple_values()
+        {
+            var singleParameter = new
+            {
+                FirstName = "Tim"
+            };
+
+            var collectionParameter = new
+            {
+                FirstName = new List<string> { "Tim", "John" }
+            };
+
+            using (var context = new FilterDbContext(fixture.ConnectionString))
+            {
+                IQueryable<Person> query = context.People.AsNoTracking();
+
+                var expectedQuery = query.Filter(singleParameter);
+                var actualQuery = query.Filter(collectionParameter);
+
+                Assert.NotEqual(expectedQuery.ToString(), actualQuery.ToString(), StringComparer.OrdinalIgnoreCase);
+            }
+        }
+
+        [Fact]
+        public void Should_optimize_collections_containing_a_single_value()
+        {
+            var singleParameter = new
+            {
+                FirstName = "Tim"
+            };
+
+            var collectionParameter = new
+            {
+                FirstName = new List<string> { "Tim" }
+            };
+
+            using (var context = new FilterDbContext(fixture.ConnectionString))
+            {
+                IQueryable<Person> query = context.People.AsNoTracking();
+
+                var expectedQuery = query.Filter(singleParameter);
+                var actualQuery = query.Filter(collectionParameter);
+
+                Assert.Equal(expectedQuery.ToString(), actualQuery.ToString(), StringComparer.OrdinalIgnoreCase);
+            }
+        }
+
+        public sealed class FilterDbContext : DbContext
         {
             public FilterDbContext(string nameOrConnectionString)
-                : base(nameOrConnectionString)
-            { }
+                : base(nameOrConnectionString) { }
 
-            public DbSet<Person> People
-            {
-                get; set;
-            }
+            public DbSet<Person> People { get; set; }
         }
 
         public class Person

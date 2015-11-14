@@ -65,7 +65,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Extensions\LazyExtensions.cs" />
     <Compile Include="FilterTests.cs" />
+    <Compile Include="Generic\Integration\DatabaseFixture.cs" />
     <Compile Include="Generic\IQueryable`1ExtensionsTests.cs" />
     <Compile Include="Generic\IEnumerable`1ExtensionsTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
