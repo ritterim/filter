@@ -1,9 +1,9 @@
-using RimDev.Filter.Generic;
-using RimDev.Filter.Range.Generic;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
+using RimDev.Filter.Generic;
+using RimDev.Filter.Range.Generic;
 using Xunit;
 
 namespace RimDev.Filter.Tests.Generic.Integration
@@ -121,7 +121,7 @@ namespace RimDev.Filter.Tests.Generic.Integration
             {
                 IQueryable<Person> query = context.People.AsNoTracking();
 
-                var expectedQuery = query.Filter(singleParameter);
+                var expectedQuery = query.Where(x => x.FirstName == singleParameter.FirstName);
                 var actualQuery = query.Filter(collectionParameter);
 
                 Assert.Equal(expectedQuery.ToString(), actualQuery.ToString(), StringComparer.OrdinalIgnoreCase);

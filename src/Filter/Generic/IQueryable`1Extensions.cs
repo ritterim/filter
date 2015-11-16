@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -196,7 +197,10 @@ namespace RimDev.Filter.Generic
             var parameterExpression = Expression.Parameter(typeof(T), "x");
             var propertyExpression = Expression.Property(parameterExpression, property);
 
-            var constantExpression = Expression.Constant(value, valueType);
+            var method = typeof(ExpressionHelper).GetMethod("WrappedConstant");
+            var genericMethod = method.MakeGenericMethod(valueType);
+
+            var constantExpression = (MemberExpression)genericMethod.Invoke(null, new[] {value });
             var comparandExpression = Nullable.GetUnderlyingType(propertyExpression.Type) != null
                 ? Expression.Convert(constantExpression, propertyExpression.Type)
                 : (Expression)constantExpression;
@@ -334,6 +338,33 @@ namespace RimDev.Filter.Generic
                 }
 
                 return null;
+            }
+        }
+
+        /**
+         * Source: http://graemehill.ca/entity-framework-dynamic-queries-and-parameterization/
+         **/
+        private static class ExpressionHelper
+        {
+            [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "This method is invoked dynamically.")]
+            public static MemberExpression WrappedConstant<TValue>(TValue value)
+            {
+                var wrapper = new WrappedObj<TValue>(value);
+                return Expression.Field(
+                    Expression.Constant(wrapper),
+                    typeof(WrappedObj<TValue>).GetField("Value"));
+            }
+
+            [SuppressMessage("ReSharper", "MemberCanBePrivate.Local")]
+            private struct WrappedObj<TValue>
+            {
+                [SuppressMessage("ReSharper", "NotAccessedField.Local", Justification = "This member is dynamically accessed.")]
+                public readonly TValue Value;
+
+                public WrappedObj(TValue value)
+                {
+                    Value = value;
+                }
             }
         }
     }
