@@ -1,6 +1,6 @@
 ﻿using Nest;
 
-namespace Filter.Elasticsearch.Generic
+namespace Filter.Nest.Generic
 {
     public static class SearchDescriptor_1Extensions
     {
