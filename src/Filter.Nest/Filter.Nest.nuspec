@@ -1,14 +1,14 @@
 <?xml version="1.0"?>
-<package >
+<package>
   <metadata>
-    <id>RimDev.Filter</id>
+    <id>RimDev.Filter.Nest</id>
     <version>0.0.0</version>
     <authors>Ritter Insurance Marketing</authors>
     <licenseUrl>https://raw.githubusercontent.com/ritterim/filter/master/LICENSE</licenseUrl>
     <projectUrl>https://github.com/ritterim/filter</projectUrl>
-    <description>The "classy" way to filter collections.</description>
-    <copyright>Copyright 2015 Ritter Insurance Marketing</copyright>
+    <description>The "classy" way to filter collections. Supports NEST.</description>
+    <copyright>Copyright 2016 Ritter Insurance Marketing</copyright>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <tags>rimdev ienumerable filter range</tags>
+    <tags>nest rimdev filter</tags>
   </metadata>
 </package>

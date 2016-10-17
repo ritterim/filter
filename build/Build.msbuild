@@ -49,12 +49,22 @@
   </Target>
 
   <Target Name="Package" DependsOnTargets="Clean; Build; Test">
+    <PropertyGroup>
+      <PackageVersion Condition=" '$(PackageVersion)' == '' And '$(GitVersion_NuGetVersion)' == '' ">$(GitVersion_NuGetVersion)</PackageVersion>
+      <PackageVersion Condition=" '$(PackageVersion)' == '' ">0.0.0</PackageVersion>
+    </PropertyGroup>
+
     <ItemGroup>
-      <NuGetSpecs Include="$(RootPath)**\*.nuspec" />
+      <NuSpecFiles Include="$(RootPath)src\*\*.nuspec" />
+
+      <NuGetArgs Include="-Properties Configuration=$(Configuration)" />
+      <NuGetArgs Include="-Version $(PackageVersion)" />
+      <NuGetArgs Include="-OutputDirectory $(ArtifactsPath)" />
+      <NuGetArgs Include="-NonInteractive" />
     </ItemGroup>
 
     <MakeDir Directories="$(ArtifactsPath)" Condition=" !Exists('$(ArtifactsPath)') " />
 
-    <Exec Command="$(NuGetPath) pack %(NuGetSpecs.Identity) -outputdirectory $(ArtifactsPath) -version $(PackageVersion)" />
+    <Exec Command="$(NuGetPath) pack &quot;%(NuSpecFiles.RootDir)%(NuSpecFiles.Directory)%(NuSpecFiles.FileName).csproj&quot; @(NuGetArgs, ' ')" />
   </Target>
 </Project>
