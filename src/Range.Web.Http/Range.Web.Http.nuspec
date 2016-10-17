@@ -10,12 +10,5 @@
     <copyright>Copyright 2015 Ritter Insurance Marketing</copyright>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <tags>rimdev ienumerable filter range</tags>
-    <dependencies>
-      <dependency id="RimDev.Filter" version="$version$" />
-      <dependency id="Microsoft.AspNet.WebApi.Core" version="[5.2.3,6)" />
-    </dependencies>
   </metadata>
-  <files>
-    <file src="bin\Release\RimDev.Filter.Range.Web.Http.dll" target="lib\net45" />
-  </files>
 </package>
