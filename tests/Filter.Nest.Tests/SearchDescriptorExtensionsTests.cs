@@ -98,6 +98,108 @@ namespace Filter.Nest.Tests
                     Assert.Equal("Monte Carlo", twoResults.Hits.Last().Source.Name);
                 }
             }
+
+            [Fact]
+            public void Nullable_boolean_omitted_returns_expected_results()
+            {
+                using (var elasticsearch = new ElasticsearchInside.Elasticsearch())
+                {
+                    var elasticClient = new ElasticClient(new ConnectionSettings(elasticsearch.Url));
+
+                    var camaro = new Car { Name = "Camaro", IsElectric = false };
+                    var volt = new Car { Name = "Volt", IsElectric = true };
+
+                    elasticClient.Index(camaro, x => x.Index("vehicles"));
+                    elasticClient.Index(volt, x => x.Index("vehicles"));
+
+                    elasticClient.Refresh("vehicles");
+
+                    var results = elasticClient
+                        .Search<Car>(x => x.Index("vehicles")
+                        .PostFilter(new { }));
+
+                    Assert.NotNull(results);
+                    Assert.Equal(2, results.Hits.Count());
+                    Assert.Equal("Camaro", results.Hits.First().Source.Name);
+                    Assert.Equal("Volt", results.Hits.Last().Source.Name);
+                }
+            }
+
+            [Fact]
+            public void Nullable_boolean_null_returns_expected_results()
+            {
+                using (var elasticsearch = new ElasticsearchInside.Elasticsearch())
+                {
+                    var elasticClient = new ElasticClient(new ConnectionSettings(elasticsearch.Url));
+
+                    var camaro = new Car { Name = "Camaro", IsElectric = false };
+                    var volt = new Car { Name = "Volt", IsElectric = true };
+
+                    elasticClient.Index(camaro, x => x.Index("vehicles"));
+                    elasticClient.Index(volt, x => x.Index("vehicles"));
+
+                    elasticClient.Refresh("vehicles");
+
+                    var results = elasticClient
+                        .Search<Car>(x => x.Index("vehicles")
+                        .PostFilter(new { IsElectric = (bool?)null }));
+
+                    Assert.NotNull(results);
+                    Assert.Equal(2, results.Hits.Count());
+                    Assert.Equal("Camaro", results.Hits.First().Source.Name);
+                    Assert.Equal("Volt", results.Hits.Last().Source.Name);
+                }
+            }
+
+            [Fact]
+            public void Nullable_boolean_true_returns_expected_results()
+            {
+                using (var elasticsearch = new ElasticsearchInside.Elasticsearch())
+                {
+                    var elasticClient = new ElasticClient(new ConnectionSettings(elasticsearch.Url));
+
+                    var camaro = new Car { Name = "Camaro", IsElectric = false };
+                    var volt = new Car { Name = "Volt", IsElectric = true };
+
+                    elasticClient.Index(camaro, x => x.Index("vehicles"));
+                    elasticClient.Index(volt, x => x.Index("vehicles"));
+
+                    elasticClient.Refresh("vehicles");
+
+                    var results = elasticClient
+                        .Search<Car>(x => x.Index("vehicles")
+                        .PostFilter(new { IsElectric = true }));
+
+                    Assert.NotNull(results);
+                    Assert.Equal(1, results.Hits.Count());
+                    Assert.Equal("Volt", results.Hits.First().Source.Name);
+                }
+            }
+
+            [Fact]
+            public void Nullable_boolean_false_returns_expected_results()
+            {
+                using (var elasticsearch = new ElasticsearchInside.Elasticsearch())
+                {
+                    var elasticClient = new ElasticClient(new ConnectionSettings(elasticsearch.Url));
+
+                    var camaro = new Car { Name = "Camaro", IsElectric = false };
+                    var volt = new Car { Name = "Volt", IsElectric = true };
+
+                    elasticClient.Index(camaro, x => x.Index("vehicles"));
+                    elasticClient.Index(volt, x => x.Index("vehicles"));
+
+                    elasticClient.Refresh("vehicles");
+
+                    var results = elasticClient
+                        .Search<Car>(x => x.Index("vehicles")
+                        .PostFilter(new { IsElectric = false }));
+
+                    Assert.NotNull(results);
+                    Assert.Equal(1, results.Hits.Count());
+                    Assert.Equal("Camaro", results.Hits.First().Source.Name);
+                }
+            }
         }
 
         private class Car
@@ -107,6 +209,9 @@ namespace Filter.Nest.Tests
 
             [MappingAlias("year")]
             public int Year { get; set; }
+
+            [MappingAlias("isElectric")]
+            public bool IsElectric { get; set; }
         }
     }
 }
