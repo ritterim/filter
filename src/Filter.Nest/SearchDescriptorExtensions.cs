@@ -72,7 +72,8 @@ namespace RimDev.Filter.Nest
                     else
                     {
                         Func<object, string> formatter;
-                        DefaultFilterValueFormatters.TryGetValue(filterProperty.PropertyType, out formatter);
+                        var type = Nullable.GetUnderlyingType(filterProperty.PropertyType) ?? filterProperty.PropertyType;
+                        DefaultFilterValueFormatters.TryGetValue(type, out formatter);
 
                         if (formatter == null)
                         {
