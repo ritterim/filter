@@ -9,15 +9,28 @@ namespace RimDev.Filter.Nest
 {
     public static class SearchDescriptorExtensions
     {
+        public static readonly IDictionary<Type, Func<object, string>> DefaultFilterValueFormatters =
+            new Dictionary<Type, Func<object, string>>
+            {
+                { typeof(bool), (x) => x?.ToString().ToLowerInvariant() }
+            };
+
         public static SearchDescriptor<T> PostFilter<T>(
             this SearchDescriptor<T> value,
-            object filter)
+            object filter,
+            IDictionary<Type, Func<object, string>> filterValueFormatters = null)
             where T : class
         {
             if (filter == null)
             {
                 return value;
             }
+
+            if (filterValueFormatters == null)
+            {
+                filterValueFormatters = DefaultFilterValueFormatters;
+            }
+
             var validValueProperties = typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance)
                 .Where(x => x.CanRead)
                 .ToDictionary(x => x.Name, x => x, StringComparer.OrdinalIgnoreCase);
@@ -58,11 +71,19 @@ namespace RimDev.Filter.Nest
                     }
                     else
                     {
+                        Func<object, string> formatter;
+                        DefaultFilterValueFormatters.TryGetValue(filterProperty.PropertyType, out formatter);
+
+                        if (formatter == null)
+                        {
+                            formatter = x => x.ToString();
+                        }
+
                         mustQueries.Add(x =>
                             x.Match(y =>
                                 y
                                 .Field(validValuePropertyName)
-                                .Query(filterPropertyValue.ToString())));
+                                .Query(formatter(filterPropertyValue))));
                     }
 
                     mustQueries.Add(x =>
