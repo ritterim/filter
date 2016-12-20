@@ -57,6 +57,7 @@
     <ItemGroup>
       <NuSpecFiles Include="$(RootPath)src\*\*.nuspec" />
 
+      <NuGetArgs Include="-IncludeReferencedProjects" />
       <NuGetArgs Include="-Properties Configuration=$(Configuration)" />
       <NuGetArgs Include="-Version $(PackageVersion)" />
       <NuGetArgs Include="-OutputDirectory $(ArtifactsPath)" />
