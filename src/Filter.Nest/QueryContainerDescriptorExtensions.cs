@@ -7,10 +7,10 @@ using System.Reflection;
 
 namespace RimDev.Filter.Nest
 {
-    public static class SearchDescriptorExtensions
+    public static class QueryContainerDescriptorExtensions
     {
-        public static SearchDescriptor<T> PostFilter<T>(
-            this SearchDescriptor<T> value,
+        public static QueryContainer Filter<T>(
+            this QueryContainerDescriptor<T> value,
             object filter,
             IDictionary<Type, Func<object, string>> filterValueFormatters = null)
             where T : class
@@ -89,9 +89,8 @@ namespace RimDev.Filter.Nest
 
             if (mustQueries.Any())
             {
-                value = value.PostFilter(x =>
-                    x.Bool(y =>
-                        y.Must(mustQueries)));
+                return value.Bool(x =>
+                    x.Must(mustQueries));
             }
 
             return value;
