@@ -53,6 +53,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="FilterLogic.cs" />
     <Compile Include="MappingAliasAttribute.cs" />
     <Compile Include="NestFilterOptions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
