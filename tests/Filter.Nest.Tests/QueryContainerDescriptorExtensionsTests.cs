@@ -5,9 +5,9 @@ using Xunit;
 
 namespace Filter.Nest.Tests
 {
-    public class SearchDescriptorExtensionsTests
+    public class QueryContainerDescriptorExtensionsTests
     {
-        public class PostFilter : SearchDescriptorExtensionsTests
+        public class Filter : SearchDescriptorExtensionsTests
         {
             [Fact]
             public void Can_query_using_collection()
@@ -26,14 +26,16 @@ namespace Filter.Nest.Tests
 
                     elasticClient.Refresh("vehicles");
 
-                    var results = elasticClient
-                        .Search<Car>(x => x.Index("vehicles")
-                        .PostFilter(new { Name = new[] { "camaro", "monte carlo" } }));
+                    var results = elasticClient.Search<Car>(s => s.Index("vehicles").Query(
+                        q => q.Filter(new { Name = new[] { "camaro", "monte carlo" } })));
 
                     Assert.NotNull(results);
                     Assert.Equal(2, results.Hits.Count());
-                    Assert.Equal("Camaro", results.Hits.First().Source.Name);
-                    Assert.Equal("Monte Carlo", results.Hits.Last().Source.Name);
+
+                    var sortedSources = results.Hits.OrderBy(x => x.Source.Name).Select(x => x.Source);
+
+                    Assert.Equal("Camaro", sortedSources.First().Name);
+                    Assert.Equal("Monte Carlo", sortedSources.Last().Name);
                 }
             }
 
@@ -53,10 +55,9 @@ namespace Filter.Nest.Tests
                     elasticClient.Index(monteCarlo, x => x.Index("vehicles"));
 
                     elasticClient.Refresh("vehicles");
-
-                    var results = elasticClient
-                        .Search<Car>(x => x.Index("vehicles")
-                        .PostFilter(new { Name = "camaro" }));
+                    
+                    var results = elasticClient.Search<Car>(s => s.Index("vehicles").Query(
+                        q => q.Filter(new { Name = new[] { "camaro" } })));
 
                     Assert.NotNull(results);
                     Assert.Equal(1, results.Hits.Count());
@@ -81,9 +82,8 @@ namespace Filter.Nest.Tests
 
                     elasticClient.Refresh("vehicles");
 
-                    var noResults = elasticClient
-                        .Search<Car>(x => x.Index("vehicles")
-                        .PostFilter(new { Name = new[] { "camaro", "monte carlo" }, Year = 2016 }));
+                    var noResults = elasticClient.Search<Car>(s => s.Index("vehicles").Query(
+                        q => q.Filter(new { Name = new[] { "camaro", "monte carlo" }, Year = 2016 })));
 
                     Assert.NotNull(noResults);
                     Assert.Equal(0, noResults.Hits.Count());
@@ -114,9 +114,8 @@ namespace Filter.Nest.Tests
 
                     elasticClient.Refresh("vehicles");
 
-                    var results = elasticClient
-                        .Search<Car>(x => x.Index("vehicles")
-                        .PostFilter(new { }));
+                    var results = elasticClient.Search<Car>(s => s.Index("vehicles").Query(
+                        q => q.MatchAll() && q.Filter(new { })));
 
                     Assert.NotNull(results);
                     Assert.Equal(2, results.Hits.Count());
@@ -140,9 +139,8 @@ namespace Filter.Nest.Tests
 
                     elasticClient.Refresh("vehicles");
 
-                    var results = elasticClient
-                        .Search<Car>(x => x.Index("vehicles")
-                        .PostFilter(new { IsElectric = (bool?)null }));
+                    var results = elasticClient.Search<Car>(s => s.Index("vehicles").Query(
+                        q => q.MatchAll() && q.Filter(new { IsElectric = (bool?)null })));
 
                     Assert.NotNull(results);
                     Assert.Equal(2, results.Hits.Count());
@@ -166,9 +164,8 @@ namespace Filter.Nest.Tests
 
                     elasticClient.Refresh("vehicles");
 
-                    var results = elasticClient
-                        .Search<Car>(x => x.Index("vehicles")
-                        .PostFilter(new { IsElectric = true }));
+                    var results = elasticClient.Search<Car>(s => s.Index("vehicles").Query(
+                        q => q.Filter(new { IsElectric = true })));
 
                     Assert.NotNull(results);
                     Assert.Equal(1, results.Hits.Count());
@@ -191,9 +188,8 @@ namespace Filter.Nest.Tests
 
                     elasticClient.Refresh("vehicles");
 
-                    var results = elasticClient
-                        .Search<Car>(x => x.Index("vehicles")
-                        .PostFilter(new { IsElectric = false }));
+                    var results = elasticClient.Search<Car>(s => s.Index("vehicles").Query(
+                        q => q.Filter(new { IsElectric = false })));
 
                     Assert.NotNull(results);
                     Assert.Equal(1, results.Hits.Count());
