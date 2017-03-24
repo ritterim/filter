@@ -38,20 +38,28 @@ namespace RimDev.Filter.Nest
                 {
                     var queries = new List<Func<QueryContainerDescriptor<T>, QueryContainer>>();
                     var aliasAttribute = validValueProperty.GetCustomAttribute<MappingAliasAttribute>();
-                    var validValuePropertyName = aliasAttribute != null
-                        ? aliasAttribute.Alias
-                        : filterProperty.Name;
 
                     if (typeof(IEnumerable).IsAssignableFrom(filterProperty.PropertyType)
                         && filterProperty.PropertyType != typeof(string))
                     {
                         foreach (var item in (IEnumerable)filterPropertyValue)
                         {
-                            queries.Add(x =>
-                                x.Match(y =>
-                                    y
-                                        .Field(validValuePropertyName)
-                                        .Query(item.ToString())));
+                            if (aliasAttribute != null)
+                            {
+                                queries.Add(x =>
+                                    x.Match(y =>
+                                        y
+                                            .Field(aliasAttribute.Alias)
+                                            .Query(item.ToString())));
+                            }
+                            else
+                            {
+                                queries.Add(x =>
+                                    x.Match(y =>
+                                        y
+                                            .Field(validValueProperty)
+                                            .Query(item.ToString())));
+                            }
                         }
                     }
                     else
@@ -65,11 +73,22 @@ namespace RimDev.Filter.Nest
                             formatter = x => x.ToString();
                         }
 
-                        mustQueries.Add(x =>
-                            x.Match(y =>
-                                y
-                                    .Field(validValuePropertyName)
-                                    .Query(formatter(filterPropertyValue))));
+                        if (aliasAttribute != null)
+                        {
+                            mustQueries.Add(x =>
+                                x.Match(y =>
+                                    y
+                                        .Field(aliasAttribute.Alias)
+                                        .Query(formatter(filterPropertyValue))));
+                        }
+                        else
+                        {
+                            mustQueries.Add(x =>
+                                x.Match(y =>
+                                    y
+                                        .Field(validValueProperty)
+                                        .Query(formatter(filterPropertyValue))));
+                        }
                     }
 
                     mustQueries.Add(x =>
