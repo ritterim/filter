@@ -57,6 +57,7 @@
     <Compile Include="MappingAliasAttribute.cs" />
     <Compile Include="NestFilterOptions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="BoolQueryDescriptorExtensions.cs" />
     <Compile Include="QueryContainerDescriptorExtensions.cs" />
     <Compile Include="SearchDescriptorExtensions.cs" />
   </ItemGroup>

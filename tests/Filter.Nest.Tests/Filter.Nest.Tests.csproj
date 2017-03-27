@@ -74,6 +74,7 @@
   <ItemGroup>
     <Compile Include="Car.cs" />
     <Compile Include="MappingAliasAttributeTests.cs" />
+    <Compile Include="BoolQueryDescriptorExtensionsTests.cs" />
     <Compile Include="QueryContainerDescriptorExtensionsTests.cs" />
     <Compile Include="SearchDescriptorExtensionsTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
