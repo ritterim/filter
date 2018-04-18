@@ -22,6 +22,7 @@ namespace RimDev.Filter.Tests.Generic.Integration
             new Person()
             {
                 FavoriteDate = DateTime.Parse("2000-01-01"),
+                FavoriteDateTimeOffset = DateTimeOffset.Parse("2010-01-01"),
                 FavoriteLetter = 'a',
                 FavoriteNumber = 5,
                 FirstName = "John",
@@ -30,6 +31,7 @@ namespace RimDev.Filter.Tests.Generic.Integration
             new Person()
             {
                 FavoriteDate = DateTime.Parse("2000-01-02"),
+                FavoriteDateTimeOffset = DateTimeOffset.Parse("2010-01-02"),
                 FavoriteLetter = 'b',
                 FavoriteNumber = 10,
                 FirstName = "Tim",
@@ -52,6 +54,26 @@ namespace RimDev.Filter.Tests.Generic.Integration
                 var @return = context.People.Filter(new
                 {
                     Rating = new decimal?(4.5m)
+                });
+
+                Assert.Equal(1, @return.Count());
+
+                transaction.Rollback();
+            }
+        }
+
+        [Fact]
+        public void Can_filter_datetimeoffset_via_entity_framework()
+        {
+            using (var context = new FilterDbContext(fixture.ConnectionString))
+            using (var transaction = context.Database.BeginTransaction())
+            {
+                context.People.AddRange(People);
+                context.SaveChanges();
+
+                var @return = context.People.Filter(new
+                {
+                    FavoriteDateTimeOffset = (Range<DateTimeOffset>)"[2010-01-01,2010-01-02)"
                 });
 
                 Assert.Equal(1, @return.Count());
@@ -188,6 +210,7 @@ namespace RimDev.Filter.Tests.Generic.Integration
         {
             public int Id { get; set; }
             public DateTime FavoriteDate { get; set; }
+            public DateTimeOffset FavoriteDateTimeOffset { get; set; }
             public char FavoriteLetter { get; set; }
             public int FavoriteNumber { get; set; }
             public string FirstName { get; set; }

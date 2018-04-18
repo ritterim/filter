@@ -14,6 +14,7 @@ namespace RimDev.Filter.Tests.Generic
             public class Person
             {
                 public DateTime FavoriteDate { get; set; }
+                public DateTimeOffset FavoriteDateTimeOffset { get; set; }
                 public char FavoriteLetter { get; set; }
                 public int FavoriteNumber { get; set; }
                 public string FirstName { get; set; }
@@ -27,6 +28,7 @@ namespace RimDev.Filter.Tests.Generic
                 new Person()
                 {
                     FavoriteDate = DateTime.Parse("2000-01-01"),
+                    FavoriteDateTimeOffset = DateTime.Parse("2010-01-01"),
                     FavoriteLetter = 'a',
                     FavoriteNumber = 5,
                     FirstName = "John",
@@ -36,6 +38,7 @@ namespace RimDev.Filter.Tests.Generic
                 new Person()
                 {
                     FavoriteDate = DateTime.Parse("2000-01-02"),
+                    FavoriteDateTimeOffset = DateTime.Parse("2010-01-02"),
                     FavoriteLetter = 'b',
                     FavoriteNumber = 10,
                     FirstName = "Tim",
@@ -296,6 +299,19 @@ namespace RimDev.Filter.Tests.Generic
                 var @return = People.Filter(new
                 {
                     FavoriteDate = Range.Range.FromString<DateTime>("[2000-01-01,2000-01-02)")
+                });
+
+                Assert.NotNull(@return);
+                Assert.Equal(1, @return.Count());
+                Assert.Equal("John", @return.First().FirstName);
+            }
+
+            [Fact]
+            public void Should_filter_when_property_types_match_as_range_datetimeoffset()
+            {
+                var @return = People.Filter(new
+                {
+                    FavoriteDateTimeOffset = Range.Range.FromString<DateTimeOffset>("[2010-01-01,2010-01-02)")
                 });
 
                 Assert.NotNull(@return);
