@@ -89,6 +89,10 @@ namespace RimDev.Filter.Generic
                         {
                             queryableValue = queryableValue.Range(validValuePropertyName, (IRange<DateTime>)filterPropertyValue);
                         }
+                        else if (genericTypeArgument == typeof(DateTimeOffset))
+                        {
+                            queryableValue = queryableValue.Range(validValuePropertyName, (IRange<DateTimeOffset>)filterPropertyValue);
+                        }
                         else if (genericTypeArgument == typeof(decimal))
                         {
                             queryableValue = queryableValue.Range(validValuePropertyName, (IRange<decimal>)filterPropertyValue);
