@@ -82,7 +82,7 @@ namespace RimDev.Filter.Range
                 {
                     try
                     {
-                        minValue = (T)Convert.ChangeType(parsedMinValue, typeof(T));
+                        minValue = SmartConverter.Convert<T>(parsedMinValue);
                     }
                     catch (Exception)
                     {
@@ -97,7 +97,7 @@ namespace RimDev.Filter.Range
                 {
                     try
                     {
-                        maxValue = (T)Convert.ChangeType(parsedMaxValue, typeof(T));
+                        maxValue = SmartConverter.Convert<T>(parsedMaxValue);
                     }
                     catch (Exception)
                     {
