@@ -32,6 +32,33 @@ namespace RimDev.Filter.Range.Tests
             }
 
             [Theory,
+            InlineData("[2017-01-01T00:00:00.000+00:00, 2018-02-02T00:00:00.000+00:00)")]
+            public void Can_parse_valid_date_string_as_datetime(string value)
+            {
+                var @return = Range.FromString<DateTime>(value);
+
+                Assert.NotNull(@return);
+            }
+
+            [Theory,
+            InlineData("[2017-01-01T00:00:00.000+00:00, 2018-02-02T00:00:00.000+00:00)")]
+            public void Can_parse_valid_date_string_as_datetimeoffset(string value)
+            {
+                var @return = Range.FromString<DateTimeOffset>(value);
+
+                Assert.NotNull(@return);
+            }
+
+            [Theory,
+            InlineData("[2017-01-01,2018-02-02)")]
+            public void Can_parse_valid_simple_date_string_as_datetimeoffset(string value)
+            {
+                var @return = Range.FromString<DateTimeOffset>(value);
+
+                Assert.NotNull(@return);
+            }
+
+            [Theory,
             InlineData("(123,456)", false),
             InlineData("[123,456)", true),
             InlineData("123", true),
