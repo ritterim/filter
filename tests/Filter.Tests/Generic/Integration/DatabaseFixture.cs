@@ -12,7 +12,7 @@ namespace RimDev.Filter.Tests.Generic.Integration
         public DatabaseFixture()
         {
             lazyDatabase = new Lazy<LocalDb>(
-                () => new LocalDb(version: "v12.0"), LazyThreadSafetyMode.ExecutionAndPublication);
+                () => new LocalDb(version: "v13.0"), LazyThreadSafetyMode.ExecutionAndPublication);
         }
 
         public string ConnectionString => lazyDatabase.Value.ConnectionString;
