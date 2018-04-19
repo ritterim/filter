@@ -1,25 +1,35 @@
 using System;
-using System.Threading;
-using RimDev.Automation.Sql;
-using RimDev.Filter.Tests.Extensions;
+using System.Data.Common;
+using System.Data.SqlLocalDb;
 
 namespace RimDev.Filter.Tests.Generic.Integration
 {
-    public sealed class DatabaseFixture : IDisposable
+    public class DatabaseFixture : IDisposable
     {
-        private readonly Lazy<LocalDb> lazyDatabase;
+        private readonly Lazy<TemporarySqlLocalDbInstance> lazyInstance;
 
         public DatabaseFixture()
         {
-            lazyDatabase = new Lazy<LocalDb>(
-                () => new LocalDb(version: "v13.0"), LazyThreadSafetyMode.ExecutionAndPublication);
+            lazyInstance = new Lazy<TemporarySqlLocalDbInstance>(
+                () => TemporarySqlLocalDbInstance.Create(true));
         }
 
-        public string ConnectionString => lazyDatabase.Value.ConnectionString;
-        
+        public DbConnectionStringBuilder CreateConnectionStringBuilder()
+        {
+            var instance = lazyInstance.Value;
+
+            var builder = lazyInstance.Value.CreateConnectionStringBuilder();
+            builder.SetInitialCatalogName(Guid.NewGuid().ToString("N"));
+
+            return builder;
+        }
+
+        public string ConnectionString => CreateConnectionStringBuilder().ConnectionString;
+
         public void Dispose()
         {
-            lazyDatabase.Dispose();
+            if (lazyInstance.IsValueCreated)
+                lazyInstance.Value.Dispose();
         }
     }
 }
