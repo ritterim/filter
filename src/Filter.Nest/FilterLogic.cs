@@ -39,6 +39,12 @@ namespace RimDev.Filter.Nest
                     var queries = new List<Func<QueryContainerDescriptor<T>, QueryContainer>>();
                     var aliasAttribute = validValueProperty.GetCustomAttribute<MappingAliasAttribute>();
 
+                    if (typeof(Range.Generic.IRange<>).IsAssignableFrom(filterProperty.PropertyType))
+                    {
+                        
+                        
+                    }
+                    else
                     if (typeof(IEnumerable).IsAssignableFrom(filterProperty.PropertyType)
                         && filterProperty.PropertyType != typeof(string))
                     {
