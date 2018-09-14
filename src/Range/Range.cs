@@ -151,5 +151,53 @@ namespace RimDev.Filter.Range
 
             return result != null;
         }
+
+        public static Range<DateTimeOffset> AsDateRange(object range)
+        {
+            if (range == null)
+                return null;
+
+            switch (IsDateRange(range))
+            {
+                case true when range is Range<DateTime> dt:
+                    return new Range<DateTimeOffset> {
+                        IsMaxInclusive = dt.IsMaxInclusive,
+                        IsMinInclusive = dt.IsMinInclusive,
+                        MinValue = dt.MinValue.HasValue ? 
+                            new DateTimeOffset(dt.MinValue.Value, TimeSpan.Zero) 
+                            : (DateTimeOffset?) null,
+                        MaxValue = dt.MaxValue.HasValue ? 
+                            new DateTimeOffset(dt.MaxValue.Value, TimeSpan.Zero) 
+                            : (DateTimeOffset?) null,
+                    };
+                case true when range is Range<DateTimeOffset> dto:
+                    return dto;
+                default:
+                    return null;
+            }
+        }
+        
+        public static Range<decimal> AsNumericRange(object range)
+        {
+            if (range == null || !IsNumericRange(range))
+                return null;
+            
+            dynamic r = range;
+            
+            // Using decimal for precision 
+            var numeric = new Range<decimal>()
+            {
+                IsMaxInclusive = r.IsMaxInclusive,
+                IsMinInclusive = r.IsMinInclusive,
+                MinValue = r.MinValue == null
+                    ? (decimal?) null 
+                    : SmartConverter.Convert<decimal>(r.MinValue.ToString()),
+                MaxValue = r.MaxValue == null
+                    ? (decimal?) null 
+                    : SmartConverter.Convert<decimal>(r.MaxValue.ToString()) 
+            };
+
+            return numeric;
+        }
     }
 }
