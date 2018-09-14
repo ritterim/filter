@@ -118,19 +118,16 @@ namespace RimDev.Filter.Range
             return range;
         }
 
-        public static bool IsDateRange<T>(this IRange<T> range) 
-            where T : struct
+        public static bool IsDateRange(object range)
         {
-            var x = typeof(T);
-            var t = Nullable.GetUnderlyingType(x) ?? x;
-            var result = t == typeof(DateTime) || t == typeof(DateTimeOffset);
-            return result;
+            return range is Range<DateTimeOffset> || range is Range<DateTime>;
         }
-
-        public static bool IsNumericRange<T>(this IRange<T> range) 
-            where T : struct
+               
+        public static bool IsNumericRange(object range)
         {
-            var numbers = new[] {
+            var rangeDefinition = typeof(Range<>);
+            var numbers = new[] 
+            {
                 typeof(sbyte),
                 typeof(short),
                 typeof(int),
@@ -143,11 +140,16 @@ namespace RimDev.Filter.Range
                 typeof(double),
                 typeof(decimal)
             };
-            
-            var x = typeof(T);
-            var t = Nullable.GetUnderlyingType(x) ?? x;
-            var result = numbers.Contains(t);
-            return result;
+
+            if (range == null)
+                return false;
+
+            var target = range.GetType();
+            var result = numbers
+                .Select(type => rangeDefinition.MakeGenericType(type))
+                .FirstOrDefault(type => target == type);
+
+            return result != null;
         }
     }
 }
