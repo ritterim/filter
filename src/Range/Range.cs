@@ -1,6 +1,7 @@
 ﻿using RimDev.Filter.Range.Generic;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace RimDev.Filter.Range
@@ -115,6 +116,38 @@ namespace RimDev.Filter.Range
             }
 
             return range;
+        }
+
+        public static bool IsDateRange<T>(this IRange<T> range) 
+            where T : struct
+        {
+            var x = typeof(T);
+            var t = Nullable.GetUnderlyingType(x) ?? x;
+            var result = t == typeof(DateTime) || t == typeof(DateTimeOffset);
+            return result;
+        }
+
+        public static bool IsNumericRange<T>(this IRange<T> range) 
+            where T : struct
+        {
+            var numbers = new[] {
+                typeof(sbyte),
+                typeof(short),
+                typeof(int),
+                typeof(long),
+                typeof(byte),
+                typeof(ushort),
+                typeof(uint),
+                typeof(ulong),
+                typeof(float),
+                typeof(double),
+                typeof(decimal)
+            };
+            
+            var x = typeof(T);
+            var t = Nullable.GetUnderlyingType(x) ?? x;
+            var result = numbers.Contains(t);
+            return result;
         }
     }
 }
