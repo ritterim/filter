@@ -39,10 +39,104 @@ namespace RimDev.Filter.Nest
                     var queries = new List<Func<QueryContainerDescriptor<T>, QueryContainer>>();
                     var aliasAttribute = validValueProperty.GetCustomAttribute<MappingAliasAttribute>();
 
-                    if (typeof(Range.Generic.IRange<>).IsAssignableFrom(filterProperty.PropertyType))
+                    if (filterPropertyValue.GetType().GetInterfaces().Any(
+                        x => x.IsGenericType && x.GetGenericTypeDefinition() == typeof(Range.Generic.IRange<>)))
                     {
-                        
-                        
+                        Range.Generic.Range<DateTimeOffset> dateRange;
+                        Range.Generic.Range<decimal> numericRange;
+
+                        if ((dateRange = Range.Range.AsDateRange(filterPropertyValue)) != null)
+                        {
+                            queries.Add(x =>
+                                x.DateRange(y =>
+                                {
+                                    if (dateRange.MinValue.HasValue)
+                                    {
+                                        var minValue = dateRange.MinValue.Value.Date;
+
+                                        if (aliasAttribute != null)
+                                        {
+                                            y = dateRange.IsMinInclusive
+                                                ? y.Field(aliasAttribute.Alias).GreaterThanOrEquals(minValue)
+                                                : y.Field(aliasAttribute.Alias).GreaterThan(minValue);
+                                        }
+                                        else
+                                        {
+                                            y = dateRange.IsMinInclusive
+                                                ? y.Field(validValueProperty).GreaterThanOrEquals(minValue)
+                                                : y.Field(validValueProperty).GreaterThan(minValue);
+                                        }
+                                    }
+
+                                    if (dateRange.MaxValue.HasValue)
+                                    {
+                                        var maxValue = dateRange.MaxValue.Value.Date;
+
+                                        if (aliasAttribute != null)
+                                        {
+                                            y = dateRange.IsMaxInclusive
+                                                ? y.Field(aliasAttribute.Alias).LessThanOrEquals(maxValue)
+                                                : y.Field(aliasAttribute.Alias).LessThan(maxValue);
+                                        }
+                                        else
+                                        {
+                                            y = dateRange.IsMaxInclusive
+                                                ? y.Field(validValueProperty).LessThanOrEquals(maxValue)
+                                                : y.Field(validValueProperty).LessThan(maxValue);
+                                        }
+                                    }
+
+                                    return y;
+                                }));
+                        }
+                        else if ((numericRange = Range.Range.AsNumericRange(filterPropertyValue)) != null)
+                        {
+                            queries.Add(x =>
+                                x.Range(y =>
+                                {
+                                    if (numericRange.MinValue.HasValue)
+                                    {
+                                        var minValue = Convert.ToDouble(numericRange.MinValue.Value);
+
+                                        if (aliasAttribute != null)
+                                        {
+                                            y = numericRange.IsMinInclusive
+                                                ? y.Field(aliasAttribute.Alias).GreaterThanOrEquals(minValue)
+                                                : y.Field(aliasAttribute.Alias).GreaterThan(minValue);
+                                        }
+                                        else
+                                        {
+                                            y = numericRange.IsMinInclusive
+                                                ? y.Field(validValueProperty).GreaterThanOrEquals(minValue)
+                                                : y.Field(validValueProperty).GreaterThan(minValue);
+                                        }
+                                    }
+
+                                    if (numericRange.MaxValue.HasValue)
+                                    {
+                                        var maxValue = Convert.ToDouble(numericRange.MaxValue.Value);
+
+                                        if (aliasAttribute != null)
+                                        {
+                                            y = numericRange.IsMaxInclusive
+                                                ? y.Field(aliasAttribute.Alias).LessThanOrEquals(maxValue)
+                                                : y.Field(aliasAttribute.Alias).LessThan(maxValue);
+                                        }
+                                        else
+                                        {
+                                            y = numericRange.IsMaxInclusive
+                                                ? y.Field(validValueProperty).LessThanOrEquals(maxValue)
+                                                : y.Field(validValueProperty).LessThan(maxValue);
+                                        }
+                                    }
+
+                                    return y;
+                                }));
+                        }
+                        else
+                        {
+                            throw new InvalidOperationException($"NEST filtering does not work on `Range<T>` where `T` is `{filterProperty.PropertyType.Name}`.");
+                        }
                     }
                     else
                     if (typeof(IEnumerable).IsAssignableFrom(filterProperty.PropertyType)

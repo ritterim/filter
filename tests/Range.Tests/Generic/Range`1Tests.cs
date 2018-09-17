@@ -53,8 +53,8 @@ namespace RimDev.Filter.Range.Tests.Generic
         {
             var dateTimeRange = new Range<DateTimeOffset>
             {
-                MinValue = new DateTime(2000, 1, 1),
-                MaxValue = new DateTime(2020, 1, 1)
+                MinValue = new DateTimeOffset(2000, 1, 1, 0, 0, 0, TimeSpan.Zero),
+                MaxValue = new DateTimeOffset(2020, 1, 1, 0, 0, 0, TimeSpan.Zero)
             } as object;
             
             var result = Range.AsDateRange(dateTimeRange);
