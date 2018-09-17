@@ -1,6 +1,7 @@
 ﻿using RimDev.Filter.Range.Generic;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace RimDev.Filter.Range
@@ -115,6 +116,88 @@ namespace RimDev.Filter.Range
             }
 
             return range;
+        }
+
+        public static bool IsDateRange(object range)
+        {
+            return range is Range<DateTimeOffset> || range is Range<DateTime>;
+        }
+               
+        public static bool IsNumericRange(object range)
+        {
+            var rangeDefinition = typeof(Range<>);
+            var numbers = new[] 
+            {
+                typeof(sbyte),
+                typeof(short),
+                typeof(int),
+                typeof(long),
+                typeof(byte),
+                typeof(ushort),
+                typeof(uint),
+                typeof(ulong),
+                typeof(float),
+                typeof(double),
+                typeof(decimal)
+            };
+
+            if (range == null)
+                return false;
+
+            var target = range.GetType();
+            var result = numbers
+                .Select(type => rangeDefinition.MakeGenericType(type))
+                .FirstOrDefault(type => target == type);
+
+            return result != null;
+        }
+
+        public static Range<DateTimeOffset> AsDateRange(object range)
+        {
+            if (range == null)
+                return null;
+
+            switch (IsDateRange(range))
+            {
+                case true when range is Range<DateTime> dt:
+                    return new Range<DateTimeOffset> {
+                        IsMaxInclusive = dt.IsMaxInclusive,
+                        IsMinInclusive = dt.IsMinInclusive,
+                        MinValue = dt.MinValue.HasValue ? 
+                            new DateTimeOffset(dt.MinValue.Value, TimeSpan.Zero) 
+                            : (DateTimeOffset?) null,
+                        MaxValue = dt.MaxValue.HasValue ? 
+                            new DateTimeOffset(dt.MaxValue.Value, TimeSpan.Zero) 
+                            : (DateTimeOffset?) null,
+                    };
+                case true when range is Range<DateTimeOffset> dto:
+                    return dto;
+                default:
+                    return null;
+            }
+        }
+        
+        public static Range<decimal> AsNumericRange(object range)
+        {
+            if (range == null || !IsNumericRange(range))
+                return null;
+            
+            dynamic r = range;
+            
+            // Using decimal for precision 
+            var numeric = new Range<decimal>()
+            {
+                IsMaxInclusive = r.IsMaxInclusive,
+                IsMinInclusive = r.IsMinInclusive,
+                MinValue = r.MinValue == null
+                    ? (decimal?) null 
+                    : SmartConverter.Convert<decimal>(r.MinValue.ToString()),
+                MaxValue = r.MaxValue == null
+                    ? (decimal?) null 
+                    : SmartConverter.Convert<decimal>(r.MaxValue.ToString()) 
+            };
+
+            return numeric;
         }
     }
 }

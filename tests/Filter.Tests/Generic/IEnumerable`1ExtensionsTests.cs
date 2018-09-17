@@ -60,7 +60,7 @@ namespace RimDev.Filter.Tests.Generic
                 });
 
                 Assert.NotNull(@return);
-                Assert.Equal(1, @return.Count());
+                Assert.Single(@return);
                 Assert.Equal("John", @return.First().FirstName);
             }
 
@@ -73,7 +73,7 @@ namespace RimDev.Filter.Tests.Generic
                 });
 
                 Assert.NotNull(@return);
-                Assert.Equal(1, @return.Count());
+                Assert.Single(@return);
                 Assert.Equal("John", @return.First().FirstName);
             }
 
