@@ -1,5 +1,8 @@
 ﻿using Nest;
 using RimDev.Filter.Nest;
+using RimDev.Filter.Range;
+using System;
+using System.Diagnostics;
 using System.Linq;
 using Xunit;
 
@@ -60,7 +63,7 @@ namespace Filter.Nest.Tests
                         q => q.Bool(x => x.Filter(new { Name = new[] { "camaro" } }))));
 
                     Assert.NotNull(results);
-                    Assert.Equal(1, results.Hits.Count());
+                    Assert.Single(results.Hits);
                     Assert.Equal("Camaro", results.Hits.First().Source.Name);
                 }
             }
@@ -86,7 +89,7 @@ namespace Filter.Nest.Tests
                         q => q.Bool(x => x.Filter(new { Name = new[] { "camaro", "monte carlo" }, Year = 2016 }))));
 
                     Assert.NotNull(noResults);
-                    Assert.Equal(0, noResults.Hits.Count());
+                    Assert.Empty(noResults.Hits);
 
                     var twoResults = elasticClient
                         .Search<Car>(x => x.Index("vehicles")
@@ -168,7 +171,7 @@ namespace Filter.Nest.Tests
                         q => q.Bool(x => x.Filter(new { IsElectric = true }))));
 
                     Assert.NotNull(results);
-                    Assert.Equal(1, results.Hits.Count());
+                    Assert.Single(results.Hits);
                     Assert.Equal("Volt", results.Hits.First().Source.Name);
                 }
             }
@@ -192,8 +195,94 @@ namespace Filter.Nest.Tests
                         q => q.Bool(x => x.Filter(new { IsElectric = false }))));
 
                     Assert.NotNull(results);
-                    Assert.Equal(1, results.Hits.Count());
+                    Assert.Single(results.Hits);
                     Assert.Equal("Camaro", results.Hits.First().Source.Name);
+                }
+            }
+
+            [Theory]
+            [InlineData("[2000-01-01,]", 3)]
+            [InlineData("[2010-01-01,]", 2)]
+            [InlineData("[2020-01-01,]", 1)]
+            [InlineData("[2030-01-01,]", 0)]
+            [InlineData("[,1999-01-01]", 0)]
+            [InlineData("[,2000-01-01]", 1)]
+            [InlineData("[,2010-01-01]", 2)]
+            [InlineData("[,2020-01-01]", 3)]
+            [InlineData("(2000-01-01,]", 2)]
+            [InlineData("(2010-01-01,]", 1)]
+            [InlineData("(2020-01-01,]", 0)]
+            [InlineData("[,2000-01-01)", 0)]
+            [InlineData("[,2010-01-01)", 1)]
+            [InlineData("[,2020-01-01)", 2)]
+            [InlineData("[,2030-01-01)", 3)]
+            public void Properly_filters_date_ranges(string startProductionRunRange, int expectedResults)
+            {
+                using (var elasticsearch = new ElasticsearchInside.Elasticsearch())
+                {
+                    var elasticClient = new ElasticClient(new ConnectionSettings(elasticsearch.Url).EnableDebugMode(x =>
+                    {
+                        Debug.WriteLine(x.DebugInformation);
+                    }));
+
+                    var camaro = new Car { Name = "Camaro", StartProductionRun = DateTimeOffset.Parse("2020-01-01T00:00:00Z") };
+                    var corvette = new Car { Name = "Corvette", StartProductionRun = DateTimeOffset.Parse("2010-01-01T00:00:00Z") };
+                    var monteCarlo = new Car { Name = "Monte Carlo", StartProductionRun = DateTimeOffset.Parse("2000-01-01T00:00:00Z") };
+
+                    elasticClient.Index(camaro, x => x.Index("vehicles"));
+                    elasticClient.Index(corvette, x => x.Index("vehicles"));
+                    elasticClient.Index(monteCarlo, x => x.Index("vehicles"));
+
+                    elasticClient.Refresh("vehicles");
+
+                    var noResults = elasticClient.Search<Car>(s => s.Index("vehicles").Query(
+                        q => q.Bool(x => x.Filter(new { StartProductionRun = Range.FromString<DateTime>(startProductionRunRange) }))));
+
+                    Assert.NotNull(noResults);
+                    Assert.Equal(expectedResults, noResults.Hits.Count());
+                }
+            }
+
+            [Theory]
+            [InlineData("[2000,]", 3)]
+            [InlineData("[2010,]", 2)]
+            [InlineData("[2020,]", 1)]
+            [InlineData("[2030,]", 0)]
+            [InlineData("[,1999]", 0)]
+            [InlineData("[,2000]", 1)]
+            [InlineData("[,2010]", 2)]
+            [InlineData("[,2020]", 3)]
+            [InlineData("(2000,]", 2)]
+            [InlineData("(2010,]", 1)]
+            [InlineData("(2020,]", 0)]
+            [InlineData("[,2000)", 0)]
+            [InlineData("[,2010)", 1)]
+            [InlineData("[,2020)", 2)]
+            [InlineData("[,2030)", 3)]
+            public void Properly_filters_numeric_ranges(string yearRange, int expectedResults)
+            {
+                using (var elasticsearch = new ElasticsearchInside.Elasticsearch())
+                {
+                    var elasticClient = new ElasticClient(new ConnectionSettings(elasticsearch.Url).EnableDebugMode(x =>
+                    {
+                        Debug.WriteLine(x.DebugInformation);
+                    }));
+
+                    var camaro = new Car { Name = "Camaro", Year = 2020 };
+                    var corvette = new Car { Name = "Corvette", Year = 2010 };
+                    var monteCarlo = new Car { Name = "Monte Carlo", Year = 2000 };
+
+                    elasticClient.Index(camaro, x => x.Index("vehicles"));
+                    elasticClient.Index(corvette, x => x.Index("vehicles"));
+                    elasticClient.Index(monteCarlo, x => x.Index("vehicles"));
+
+                    elasticClient.Refresh("vehicles");
+
+                    var noResults = elasticClient.Search<Car>(s => s.Index("vehicles").Query(
+                        q => q.Bool(x => x.Filter(new { Year = Range.FromString<int>(yearRange) }))));
+
+                    Assert.NotNull(noResults);
+                    Assert.Equal(expectedResults, noResults.Hits.Count());
                 }
             }
         }
