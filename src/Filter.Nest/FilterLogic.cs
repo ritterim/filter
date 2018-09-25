@@ -138,12 +138,14 @@ namespace RimDev.Filter.Nest
                             throw new InvalidOperationException($"NEST filtering does not work on `Range<T>` where `T` is `{filterProperty.PropertyType.Name}`.");
                         }
                     }
-                    else
-                    if (typeof(IEnumerable).IsAssignableFrom(filterProperty.PropertyType)
+                    else if (typeof(IEnumerable).IsAssignableFrom(filterProperty.PropertyType)
                         && filterProperty.PropertyType != typeof(string))
                     {
                         foreach (var item in (IEnumerable)filterPropertyValue)
                         {
+                            if (item == null)
+                                continue;
+
                             if (aliasAttribute != null)
                             {
                                 queries.Add(x =>

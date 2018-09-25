@@ -100,6 +100,26 @@ namespace Filter.Nest.Tests
             }
 
             [Fact]
+            public void Null_string_array_item_does_not_throw_NullReferenceException()
+            {
+                using (var elasticsearch = new ElasticsearchInside.Elasticsearch())
+                {
+                    var elasticClient = new ElasticClient(new ConnectionSettings(elasticsearch.Url));
+
+                    var camaro = new Car { Name = "Camaro", IsElectric = false };
+                    var volt = new Car { Name = "Volt", IsElectric = true };
+
+                    elasticClient.Index(camaro, x => x.Index("vehicles"));
+                    elasticClient.Index(volt, x => x.Index("vehicles"));
+
+                    elasticClient.Refresh("vehicles");
+
+                    elasticClient.Search<Car>(s => s.Index("vehicles").Query(
+                        q => q.MatchAll() && q.Filter(new { Name = new string[] { null } })));
+                }
+            }
+
+            [Fact]
             public void Nullable_boolean_omitted_returns_expected_results()
             {
                 using (var elasticsearch = new ElasticsearchInside.Elasticsearch())
