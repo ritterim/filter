@@ -59,7 +59,7 @@ namespace Filter.Nest.Tests
                         .PostFilter(new { Name = "camaro" }));
 
                     Assert.NotNull(results);
-                    Assert.Equal(1, results.Hits.Count());
+                    Assert.Single(results.Hits);
                     Assert.Equal("Camaro", results.Hits.First().Source.Name);
                 }
             }
@@ -86,7 +86,7 @@ namespace Filter.Nest.Tests
                         .PostFilter(new { Name = new[] { "camaro", "monte carlo" }, Year = 2016 }));
 
                     Assert.NotNull(noResults);
-                    Assert.Equal(0, noResults.Hits.Count());
+                    Assert.Empty(noResults.Hits);
 
                     var twoResults = elasticClient
                         .Search<Car>(x => x.Index("vehicles")
@@ -171,7 +171,7 @@ namespace Filter.Nest.Tests
                         .PostFilter(new { IsElectric = true }));
 
                     Assert.NotNull(results);
-                    Assert.Equal(1, results.Hits.Count());
+                    Assert.Single(results.Hits);
                     Assert.Equal("Volt", results.Hits.First().Source.Name);
                 }
             }
@@ -196,7 +196,7 @@ namespace Filter.Nest.Tests
                         .PostFilter(new { IsElectric = false }));
 
                     Assert.NotNull(results);
-                    Assert.Equal(1, results.Hits.Count());
+                    Assert.Single(results.Hits);
                     Assert.Equal("Camaro", results.Hits.First().Source.Name);
                 }
             }

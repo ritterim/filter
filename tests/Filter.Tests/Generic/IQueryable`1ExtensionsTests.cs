@@ -196,7 +196,7 @@ namespace RimDev.Filter.Tests.Generic
                     Rating = new decimal?[] { 4.5m }
                 });
 
-                Assert.Equal(0, @return.Count());
+                Assert.Empty(@return);
             }
         }
 
