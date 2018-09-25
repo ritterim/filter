@@ -77,8 +77,10 @@
     <Compile Include="Generic\Integration\DatabaseFixture.cs" />
     <Compile Include="Generic\IQueryable`1ExtensionsTests.cs" />
     <Compile Include="Generic\IEnumerable`1ExtensionsTests.cs" />
+    <Compile Include="Generic\Range`1Tests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Generic\Integration\EfTests.cs" />
+    <Compile Include="RangeTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -88,10 +90,6 @@
     <ProjectReference Include="..\..\src\Filter\Filter.csproj">
       <Project>{78ea264d-1eab-4d55-bad1-71f2d3de1a2a}</Project>
       <Name>Filter</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\src\Range\Range.csproj">
-      <Project>{0e804077-79b6-4e0f-a4bb-ad5f6ec194b3}</Project>
-      <Name>Range</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
