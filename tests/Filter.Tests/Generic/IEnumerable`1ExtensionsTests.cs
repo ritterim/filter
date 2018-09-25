@@ -87,7 +87,7 @@ namespace RimDev.Filter.Tests.Generic
                 });
 
                 Assert.NotNull(@return);
-                Assert.Equal(0, @return.Count());
+                Assert.Empty(@return);
             }
 
             [Fact]
@@ -123,7 +123,7 @@ namespace RimDev.Filter.Tests.Generic
                 });
 
                 Assert.NotNull(@return);
-                Assert.Equal(1, @return.Count());
+                Assert.Single(@return);
                 Assert.Equal("Tim", @return.First().FirstName);
             }
         }
@@ -151,7 +151,7 @@ namespace RimDev.Filter.Tests.Generic
                 });
 
                 Assert.NotNull(@return);
-                Assert.Equal(1, @return.Count());
+                Assert.Single(@return);
                 Assert.Equal("John", @return.First().FirstName);
             }
 
@@ -164,7 +164,7 @@ namespace RimDev.Filter.Tests.Generic
                 });
 
                 Assert.NotNull(@return);
-                Assert.Equal(1, @return.Count());
+                Assert.Single(@return);
                 Assert.Equal("John", @return.First().FirstName);
             }
 
@@ -176,7 +176,7 @@ namespace RimDev.Filter.Tests.Generic
                     Rating = new[] { 4.5m }
                 });
 
-                Assert.Equal(1, @return.Count());
+                Assert.Single(@return);
             }
 
             [Fact]
@@ -187,7 +187,7 @@ namespace RimDev.Filter.Tests.Generic
                     Rating = new decimal?[] { 4.5m }
                 });
 
-                Assert.Equal(1, @return.Count());
+                Assert.Single(@return);
             }
 
             [Fact]
@@ -198,7 +198,7 @@ namespace RimDev.Filter.Tests.Generic
                     Rating = new decimal?(4.5m)
                 });
 
-                Assert.Equal(1, @return.Count());
+                Assert.Single(@return);
             }
 
             [Fact]
@@ -212,7 +212,7 @@ namespace RimDev.Filter.Tests.Generic
                     Rating = new decimal?[] { 4.5m }
                 });
 
-                Assert.Equal(0, @return.Count());
+                Assert.Empty(@return);
             }
         }
 
@@ -229,7 +229,7 @@ namespace RimDev.Filter.Tests.Generic
                 });
 
                 Assert.NotNull(@return);
-                Assert.Equal(1, @return.Count());
+                Assert.Single(@return);
                 Assert.Equal("John", @return.First().FirstName);
             }
 
@@ -244,7 +244,7 @@ namespace RimDev.Filter.Tests.Generic
                 });
 
                 Assert.NotNull(@return);
-                Assert.Equal(1, @return.Count());
+                Assert.Single(@return);
                 Assert.Equal("Tim", @return.First().FirstName);
             }
 
@@ -263,7 +263,7 @@ namespace RimDev.Filter.Tests.Generic
                 });
 
                 Assert.NotNull(@return);
-                Assert.Equal(1, @return.Count());
+                Assert.Single(@return);
                 Assert.Equal("John", @return.First().FirstName);
             }
 
@@ -276,7 +276,7 @@ namespace RimDev.Filter.Tests.Generic
                 });
 
                 Assert.NotNull(@return);
-                Assert.Equal(1, @return.Count());
+                Assert.Single(@return);
                 Assert.Equal("John", @return.First().FirstName);
             }
 
@@ -289,7 +289,7 @@ namespace RimDev.Filter.Tests.Generic
                 });
 
                 Assert.NotNull(@return);
-                Assert.Equal(1, @return.Count());
+                Assert.Single(@return);
                 Assert.Equal("John", @return.First().FirstName);
             }
 
@@ -302,7 +302,7 @@ namespace RimDev.Filter.Tests.Generic
                 });
 
                 Assert.NotNull(@return);
-                Assert.Equal(1, @return.Count());
+                Assert.Single(@return);
                 Assert.Equal("John", @return.First().FirstName);
             }
 
@@ -315,7 +315,7 @@ namespace RimDev.Filter.Tests.Generic
                 });
 
                 Assert.NotNull(@return);
-                Assert.Equal(1, @return.Count());
+                Assert.Single(@return);
                 Assert.Equal("John", @return.First().FirstName);
             }
 
@@ -328,7 +328,7 @@ namespace RimDev.Filter.Tests.Generic
                 });
 
                 Assert.NotNull(@return);
-                Assert.Equal(1, @return.Count());
+                Assert.Single(@return);
                 Assert.Equal("John", @return.First().FirstName);
             }
 
@@ -341,7 +341,7 @@ namespace RimDev.Filter.Tests.Generic
                 });
 
                 Assert.NotNull(@return);
-                Assert.Equal(1, @return.Count());
+                Assert.Single(@return);
                 Assert.Equal("John", @return.First().FirstName);
             }
 
@@ -354,7 +354,7 @@ namespace RimDev.Filter.Tests.Generic
                 });
 
                 Assert.NotNull(@return);
-                Assert.Equal(1, @return.Count());
+                Assert.Single(@return);
                 Assert.Equal("John", @return.First().FirstName);
             }
 
@@ -367,7 +367,7 @@ namespace RimDev.Filter.Tests.Generic
                 });
 
                 Assert.NotNull(@return);
-                Assert.Equal(1, @return.Count());
+                Assert.Single(@return);
                 Assert.Equal("John", @return.First().FirstName);
             }
 
@@ -380,7 +380,7 @@ namespace RimDev.Filter.Tests.Generic
                 });
 
                 Assert.NotNull(@return);
-                Assert.Equal(1, @return.Count());
+                Assert.Single(@return);
                 Assert.Equal("John", @return.First().FirstName);
             }
 
@@ -393,7 +393,7 @@ namespace RimDev.Filter.Tests.Generic
                 });
 
                 Assert.NotNull(@return);
-                Assert.Equal(1, @return.Count());
+                Assert.Single(@return);
                 Assert.Equal("John", @return.First().FirstName);
             }
 
@@ -406,7 +406,7 @@ namespace RimDev.Filter.Tests.Generic
                 });
 
                 Assert.NotNull(@return);
-                Assert.Equal(1, @return.Count());
+                Assert.Single(@return);
                 Assert.Equal("John", @return.First().FirstName);
             }
 
@@ -419,7 +419,7 @@ namespace RimDev.Filter.Tests.Generic
                 });
 
                 Assert.NotNull(@return);
-                Assert.Equal(1, @return.Count());
+                Assert.Single(@return);
                 Assert.Equal("John", @return.First().FirstName);
             }
 
@@ -432,7 +432,7 @@ namespace RimDev.Filter.Tests.Generic
                 });
 
                 Assert.NotNull(@return);
-                Assert.Equal(1, @return.Count());
+                Assert.Single(@return);
                 Assert.Equal("John", @return.First().FirstName);
             }
 
@@ -445,7 +445,7 @@ namespace RimDev.Filter.Tests.Generic
                 });
 
                 Assert.NotNull(@return);
-                Assert.Equal(1, @return.Count());
+                Assert.Single(@return);
                 Assert.Equal("John", @return.First().FirstName);
             }
 
@@ -457,7 +457,7 @@ namespace RimDev.Filter.Tests.Generic
                     Rating = (Range<decimal>)"[4.5,5.0]"
                 });
 
-                Assert.Equal(1, @return.Count());
+                Assert.Single(@return);
             }
         }
     }
