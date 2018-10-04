@@ -12,7 +12,7 @@ namespace Filter.Nest.Tests
             [Fact]
             public void Can_query_using_collection()
             {
-                using (var elasticsearch = new ElasticsearchInside.Elasticsearch())
+                using (var elasticsearch = TestHelpers.GetReadyElasticsearch())
                 {
                     var elasticClient = new ElasticClient(new ConnectionSettings(elasticsearch.Url));
 
@@ -30,17 +30,17 @@ namespace Filter.Nest.Tests
                         .Search<Car>(x => x.Index("vehicles")
                         .PostFilter(new { Name = new[] { "camaro", "monte carlo" } }));
 
-                    Assert.NotNull(results);
-                    Assert.Equal(2, results.Hits.Count());
-                    Assert.Equal("Camaro", results.Hits.First().Source.Name);
-                    Assert.Equal("Monte Carlo", results.Hits.Last().Source.Name);
+                    Assert.Collection(
+                        results.Hits.OrderBy(x => x.Source.Name),
+                        x => Assert.Equal("Camaro", x.Source.Name),
+                        x => Assert.Equal("Monte Carlo", x.Source.Name));
                 }
             }
 
             [Fact]
             public void Can_query_using_single_value()
             {
-                using (var elasticsearch = new ElasticsearchInside.Elasticsearch())
+                using (var elasticsearch = TestHelpers.GetReadyElasticsearch())
                 {
                     var elasticClient = new ElasticClient(new ConnectionSettings(elasticsearch.Url));
 
@@ -58,16 +58,14 @@ namespace Filter.Nest.Tests
                         .Search<Car>(x => x.Index("vehicles")
                         .PostFilter(new { Name = "camaro" }));
 
-                    Assert.NotNull(results);
-                    Assert.Single(results.Hits);
-                    Assert.Equal("Camaro", results.Hits.First().Source.Name);
+                    Assert.Equal("Camaro", results.Hits.Single().Source.Name);
                 }
             }
 
             [Fact]
             public void Multiple_filter_properties_queried_as_collection_of_and_operators()
             {
-                using (var elasticsearch = new ElasticsearchInside.Elasticsearch())
+                using (var elasticsearch = TestHelpers.GetReadyElasticsearch())
                 {
                     var elasticClient = new ElasticClient(new ConnectionSettings(elasticsearch.Url));
 
@@ -85,24 +83,23 @@ namespace Filter.Nest.Tests
                         .Search<Car>(x => x.Index("vehicles")
                         .PostFilter(new { Name = new[] { "camaro", "monte carlo" }, Year = 2016 }));
 
-                    Assert.NotNull(noResults);
                     Assert.Empty(noResults.Hits);
 
                     var twoResults = elasticClient
                         .Search<Car>(x => x.Index("vehicles")
                         .PostFilter(new { Name = new[] { "camaro", "monte carlo", "corvette" }, Year = 2000 }));
-
-                    Assert.NotNull(twoResults);
-                    Assert.Equal(2, twoResults.Hits.Count());
-                    Assert.Equal("Camaro", twoResults.Hits.First().Source.Name);
-                    Assert.Equal("Monte Carlo", twoResults.Hits.Last().Source.Name);
+                    
+                    Assert.Collection(
+                        twoResults.Hits.OrderBy(x => x.Source.Name),
+                        x => Assert.Equal("Camaro", x.Source.Name),
+                        x => Assert.Equal("Monte Carlo", x.Source.Name));
                 }
             }
 
             [Fact]
             public void Nullable_boolean_omitted_returns_expected_results()
             {
-                using (var elasticsearch = new ElasticsearchInside.Elasticsearch())
+                using (var elasticsearch = TestHelpers.GetReadyElasticsearch())
                 {
                     var elasticClient = new ElasticClient(new ConnectionSettings(elasticsearch.Url));
 
@@ -118,17 +115,17 @@ namespace Filter.Nest.Tests
                         .Search<Car>(x => x.Index("vehicles")
                         .PostFilter(new { }));
 
-                    Assert.NotNull(results);
-                    Assert.Equal(2, results.Hits.Count());
-                    Assert.Equal("Camaro", results.Hits.First().Source.Name);
-                    Assert.Equal("Volt", results.Hits.Last().Source.Name);
+                    Assert.Collection(
+                        results.Hits.OrderBy(x => x.Source.Name),
+                        x => Assert.Equal("Camaro", x.Source.Name),
+                        x => Assert.Equal("Volt", x.Source.Name));
                 }
             }
 
             [Fact]
             public void Nullable_boolean_null_returns_expected_results()
             {
-                using (var elasticsearch = new ElasticsearchInside.Elasticsearch())
+                using (var elasticsearch = TestHelpers.GetReadyElasticsearch())
                 {
                     var elasticClient = new ElasticClient(new ConnectionSettings(elasticsearch.Url));
 
@@ -144,17 +141,17 @@ namespace Filter.Nest.Tests
                         .Search<Car>(x => x.Index("vehicles")
                         .PostFilter(new { IsElectric = (bool?)null }));
 
-                    Assert.NotNull(results);
-                    Assert.Equal(2, results.Hits.Count());
-                    Assert.Equal("Camaro", results.Hits.First().Source.Name);
-                    Assert.Equal("Volt", results.Hits.Last().Source.Name);
+                    Assert.Collection(
+                        results.Hits.OrderBy(x => x.Source.Name),
+                        x => Assert.Equal("Camaro", x.Source.Name),
+                        x => Assert.Equal("Volt", x.Source.Name));
                 }
             }
 
             [Fact]
             public void Nullable_boolean_true_returns_expected_results()
             {
-                using (var elasticsearch = new ElasticsearchInside.Elasticsearch())
+                using (var elasticsearch = TestHelpers.GetReadyElasticsearch())
                 {
                     var elasticClient = new ElasticClient(new ConnectionSettings(elasticsearch.Url));
 
@@ -170,16 +167,14 @@ namespace Filter.Nest.Tests
                         .Search<Car>(x => x.Index("vehicles")
                         .PostFilter(new { IsElectric = true }));
 
-                    Assert.NotNull(results);
-                    Assert.Single(results.Hits);
-                    Assert.Equal("Volt", results.Hits.First().Source.Name);
+                    Assert.Equal("Volt", results.Hits.Single().Source.Name);
                 }
             }
 
             [Fact]
             public void Nullable_boolean_false_returns_expected_results()
             {
-                using (var elasticsearch = new ElasticsearchInside.Elasticsearch())
+                using (var elasticsearch = TestHelpers.GetReadyElasticsearch())
                 {
                     var elasticClient = new ElasticClient(new ConnectionSettings(elasticsearch.Url));
 
@@ -195,9 +190,7 @@ namespace Filter.Nest.Tests
                         .Search<Car>(x => x.Index("vehicles")
                         .PostFilter(new { IsElectric = false }));
 
-                    Assert.NotNull(results);
-                    Assert.Single(results.Hits);
-                    Assert.Equal("Camaro", results.Hits.First().Source.Name);
+                    Assert.Equal("Camaro", results.Hits.Single().Source.Name);
                 }
             }
         }
