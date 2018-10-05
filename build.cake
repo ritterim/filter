@@ -1,9 +1,18 @@
-﻿#tool "nuget:?package=xunit.runner.console"
+﻿#addin "Cake.FileHelpers"
+#tool "nuget:?package=xunit.runner.console"
 
 var target = Argument("target", "Default");
 var configuration = Argument("configuration", "Release");
 var solution = "./Filter.sln";
 var publishDirectory = Directory("./artifacts");
+
+var version = FileReadText("./version.txt").Trim();
+
+var packageVersion = version;
+if (!AppVeyor.IsRunningOnAppVeyor)
+{
+    packageVersion += "-dev";
+}
 
 Task("Clean")
     .Does(() =>
@@ -18,8 +27,24 @@ Task("Restore")
         NuGetRestore(solution);
     });
 
+Task("Version")
+    .Does(() =>
+    {
+        foreach (var assemblyInfo in GetFiles("./src/**/AssemblyInfo.cs"))
+        {
+            CreateAssemblyInfo(
+                assemblyInfo.ChangeExtension(".Generated.cs"),
+                new AssemblyInfoSettings
+                {
+                    Version = version,
+                    InformationalVersion = packageVersion
+                });
+        }
+    });
+
 Task("Build")
     .IsDependentOn("Restore")
+    .IsDependentOn("Version")
     .Does(() =>
     {
         MSBuild(solution, settings =>
@@ -43,7 +68,6 @@ Task("Publish")
         NuGetPack("./src/Filter/Filter.csproj", new NuGetPackSettings
         {
             OutputDirectory = publishDirectory,
-            Version = EnvironmentVariable("GitVersion_NuGetVersionV2"),
             Properties = new Dictionary<string, string>
             {
                 { "Configuration", configuration }
@@ -53,7 +77,6 @@ Task("Publish")
         NuGetPack("./src/Range.Web.Http/Range.Web.Http.csproj", new NuGetPackSettings
         {
             OutputDirectory = publishDirectory,
-            Version = EnvironmentVariable("GitVersion_NuGetVersionV2"),
             Properties = new Dictionary<string, string>
             {
                 { "Configuration", configuration }
@@ -63,7 +86,6 @@ Task("Publish")
         NuGetPack("./src/Filter.Nest/Filter.Nest.csproj", new NuGetPackSettings
         {
             OutputDirectory = publishDirectory,
-            Version = EnvironmentVariable("GitVersion_NuGetVersionV2"),
             Properties = new Dictionary<string, string>
             {
                 { "Configuration", configuration }
