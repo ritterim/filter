@@ -4,6 +4,7 @@ using RimDev.Filter.Range;
 using System;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace Filter.Nest.Tests
@@ -13,9 +14,9 @@ namespace Filter.Nest.Tests
         public class Filter : SearchDescriptorExtensionsTests
         {
             [Fact]
-            public void Can_query_using_collection()
+            public async Task Can_query_using_collection()
             {
-                using (var elasticsearch = TestHelpers.GetReadyElasticsearch())
+                using (var elasticsearch = await TestHelpers.GetReadyElasticsearchAsync())
                 {
                     var elasticClient = new ElasticClient(new ConnectionSettings(elasticsearch.Url));
 
@@ -40,9 +41,9 @@ namespace Filter.Nest.Tests
             }
 
             [Fact]
-            public void Can_query_using_single_value()
+            public async Task Can_query_using_single_value()
             {
-                using (var elasticsearch = TestHelpers.GetReadyElasticsearch())
+                using (var elasticsearch = await TestHelpers.GetReadyElasticsearchAsync())
                 {
                     var elasticClient = new ElasticClient(new ConnectionSettings(elasticsearch.Url));
 
@@ -64,9 +65,9 @@ namespace Filter.Nest.Tests
             }
 
             [Fact]
-            public void Multiple_filter_properties_queried_as_collection_of_and_operators()
+            public async Task Multiple_filter_properties_queried_as_collection_of_and_operators()
             {
-                using (var elasticsearch = TestHelpers.GetReadyElasticsearch())
+                using (var elasticsearch = await TestHelpers.GetReadyElasticsearchAsync())
                 {
                     var elasticClient = new ElasticClient(new ConnectionSettings(elasticsearch.Url));
 
@@ -97,9 +98,9 @@ namespace Filter.Nest.Tests
             }
 
             [Fact]
-            public void Nullable_boolean_omitted_returns_expected_results()
+            public async Task Nullable_boolean_omitted_returns_expected_results()
             {
-                using (var elasticsearch = TestHelpers.GetReadyElasticsearch())
+                using (var elasticsearch = await TestHelpers.GetReadyElasticsearchAsync())
                 {
                     var elasticClient = new ElasticClient(new ConnectionSettings(elasticsearch.Url));
 
@@ -122,9 +123,9 @@ namespace Filter.Nest.Tests
             }
 
             [Fact]
-            public void Nullable_boolean_null_returns_expected_results()
+            public async Task Nullable_boolean_null_returns_expected_results()
             {
-                using (var elasticsearch = TestHelpers.GetReadyElasticsearch())
+                using (var elasticsearch = await TestHelpers.GetReadyElasticsearchAsync())
                 {
                     var elasticClient = new ElasticClient(new ConnectionSettings(elasticsearch.Url));
 
@@ -147,9 +148,9 @@ namespace Filter.Nest.Tests
             }
 
             [Fact]
-            public void Nullable_boolean_true_returns_expected_results()
+            public async Task Nullable_boolean_true_returns_expected_results()
             {
-                using (var elasticsearch = TestHelpers.GetReadyElasticsearch())
+                using (var elasticsearch = await TestHelpers.GetReadyElasticsearchAsync())
                 {
                     var elasticClient = new ElasticClient(new ConnectionSettings(elasticsearch.Url));
 
@@ -169,9 +170,9 @@ namespace Filter.Nest.Tests
             }
 
             [Fact]
-            public void Nullable_boolean_false_returns_expected_results()
+            public async Task Nullable_boolean_false_returns_expected_results()
             {
-                using (var elasticsearch = TestHelpers.GetReadyElasticsearch())
+                using (var elasticsearch = await TestHelpers.GetReadyElasticsearchAsync())
                 {
                     var elasticClient = new ElasticClient(new ConnectionSettings(elasticsearch.Url));
 
@@ -206,9 +207,9 @@ namespace Filter.Nest.Tests
             [InlineData("[,2010-01-01)", 1)]
             [InlineData("[,2020-01-01)", 2)]
             [InlineData("[,2030-01-01)", 3)]
-            public void Properly_filters_date_ranges(string startProductionRunRange, int expectedResults)
+            public async Task Properly_filters_date_ranges(string startProductionRunRange, int expectedResults)
             {
-                using (var elasticsearch = TestHelpers.GetReadyElasticsearch())
+                using (var elasticsearch = await TestHelpers.GetReadyElasticsearchAsync())
                 {
                     var elasticClient = new ElasticClient(new ConnectionSettings(elasticsearch.Url).EnableDebugMode(x =>
                     {
@@ -248,9 +249,9 @@ namespace Filter.Nest.Tests
             [InlineData("[,2010)", 1)]
             [InlineData("[,2020)", 2)]
             [InlineData("[,2030)", 3)]
-            public void Properly_filters_numeric_ranges(string yearRange, int expectedResults)
+            public async Task Properly_filters_numeric_ranges(string yearRange, int expectedResults)
             {
-                using (var elasticsearch = TestHelpers.GetReadyElasticsearch())
+                using (var elasticsearch = await TestHelpers.GetReadyElasticsearchAsync())
                 {
                     var elasticClient = new ElasticClient(new ConnectionSettings(elasticsearch.Url).EnableDebugMode(x =>
                     {
