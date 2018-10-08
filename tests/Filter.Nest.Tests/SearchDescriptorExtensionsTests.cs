@@ -30,10 +30,10 @@ namespace Filter.Nest.Tests
                         .Search<Car>(x => x.Index("vehicles")
                         .PostFilter(new { Name = new[] { "camaro", "monte carlo" } }));
 
-                    Assert.NotNull(results);
-                    Assert.Equal(2, results.Hits.Count());
-                    Assert.Equal("Camaro", results.Hits.First().Source.Name);
-                    Assert.Equal("Monte Carlo", results.Hits.Last().Source.Name);
+                    Assert.Collection(
+                        results.Hits.OrderBy(x => x.Source.Name),
+                        x => Assert.Equal("Camaro", x.Source.Name),
+                        x => Assert.Equal("Monte Carlo", x.Source.Name));
                 }
             }
 
@@ -58,9 +58,7 @@ namespace Filter.Nest.Tests
                         .Search<Car>(x => x.Index("vehicles")
                         .PostFilter(new { Name = "camaro" }));
 
-                    Assert.NotNull(results);
-                    Assert.Single(results.Hits);
-                    Assert.Equal("Camaro", results.Hits.First().Source.Name);
+                    Assert.Equal("Camaro", results.Hits.Single().Source.Name);
                 }
             }
 
@@ -85,17 +83,16 @@ namespace Filter.Nest.Tests
                         .Search<Car>(x => x.Index("vehicles")
                         .PostFilter(new { Name = new[] { "camaro", "monte carlo" }, Year = 2016 }));
 
-                    Assert.NotNull(noResults);
                     Assert.Empty(noResults.Hits);
 
                     var twoResults = elasticClient
                         .Search<Car>(x => x.Index("vehicles")
                         .PostFilter(new { Name = new[] { "camaro", "monte carlo", "corvette" }, Year = 2000 }));
 
-                    Assert.NotNull(twoResults);
-                    Assert.Equal(2, twoResults.Hits.Count());
-                    Assert.Equal("Camaro", twoResults.Hits.First().Source.Name);
-                    Assert.Equal("Monte Carlo", twoResults.Hits.Last().Source.Name);
+                    Assert.Collection(
+                        twoResults.Hits.OrderBy(x => x.Source.Name),
+                        x => Assert.Equal("Camaro", x.Source.Name),
+                        x => Assert.Equal("Monte Carlo", x.Source.Name));
                 }
             }
 
@@ -118,10 +115,10 @@ namespace Filter.Nest.Tests
                         .Search<Car>(x => x.Index("vehicles")
                         .PostFilter(new { }));
 
-                    Assert.NotNull(results);
-                    Assert.Equal(2, results.Hits.Count());
-                    Assert.Equal("Camaro", results.Hits.First().Source.Name);
-                    Assert.Equal("Volt", results.Hits.Last().Source.Name);
+                    Assert.Collection(
+                        results.Hits.OrderBy(x => x.Source.Name),
+                        x => Assert.Equal("Camaro", x.Source.Name),
+                        x => Assert.Equal("Volt", x.Source.Name));
                 }
             }
 
@@ -144,10 +141,10 @@ namespace Filter.Nest.Tests
                         .Search<Car>(x => x.Index("vehicles")
                         .PostFilter(new { IsElectric = (bool?)null }));
 
-                    Assert.NotNull(results);
-                    Assert.Equal(2, results.Hits.Count());
-                    Assert.Equal("Camaro", results.Hits.First().Source.Name);
-                    Assert.Equal("Volt", results.Hits.Last().Source.Name);
+                    Assert.Collection(
+                        results.Hits.OrderBy(x => x.Source.Name),
+                        x => Assert.Equal("Camaro", x.Source.Name),
+                        x => Assert.Equal("Volt", x.Source.Name));
                 }
             }
 
@@ -170,9 +167,7 @@ namespace Filter.Nest.Tests
                         .Search<Car>(x => x.Index("vehicles")
                         .PostFilter(new { IsElectric = true }));
 
-                    Assert.NotNull(results);
-                    Assert.Single(results.Hits);
-                    Assert.Equal("Volt", results.Hits.First().Source.Name);
+                    Assert.Equal("Volt", results.Hits.Single().Source.Name);
                 }
             }
 
@@ -195,9 +190,7 @@ namespace Filter.Nest.Tests
                         .Search<Car>(x => x.Index("vehicles")
                         .PostFilter(new { IsElectric = false }));
 
-                    Assert.NotNull(results);
-                    Assert.Single(results.Hits);
-                    Assert.Equal("Camaro", results.Hits.First().Source.Name);
+                    Assert.Equal("Camaro", results.Hits.Single().Source.Name);
                 }
             }
         }
