@@ -2,6 +2,7 @@
 using RimDev.Automation.Sql;
 using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Data.SqlClient;
 
 namespace Filter.NPoco.Tests
@@ -45,7 +46,14 @@ create table Person(
                 }
             }
 
+#if NET462
             Database = new Database(localDb.ConnectionString, DatabaseType.SqlServer2008);
+#else
+            var conn = new SqlConnection(localDb.ConnectionString);
+            conn.Open();
+
+            Database = new Database(conn, DatabaseType.SqlServer2008);
+#endif
 
             Database.InsertBulk(people);
         }

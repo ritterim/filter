@@ -1,4 +1,5 @@
-﻿using RimDev.Filter;
+using Owin;
+using RimDev.Filter;
 using RimDev.Filter.Range.Generic;
 using RimDev.Filter.Range.Web.Http;
 using System;
@@ -6,23 +7,26 @@ using System.Web.Http;
 using System.Web.Http.ModelBinding;
 using System.Web.Http.ModelBinding.Binders;
 
-namespace Range.Web.Http
+namespace Range.Web.Http.Sample.AspNet
 {
-    public static class WebApiConfig
+    public class Startup
     {
-        public static void Register(HttpConfiguration config)
+        public void Configuration(IAppBuilder app)
         {
-            // Web API routes
+            var config = new HttpConfiguration();
+
             config.MapHttpAttributeRoutes();
 
             foreach (var type in Filter.SupportedRangeTypes)
             {
-                var intRangeProvider = new SimpleModelBinderProvider(
+                var modelBinderProvider = new SimpleModelBinderProvider(
                     typeof(Range<>).MakeGenericType(type),
                     (IModelBinder)Activator.CreateInstance(typeof(RangeModelBinder<>).MakeGenericType(type)));
 
-                config.Services.Insert(typeof(ModelBinderProvider), 0, intRangeProvider);
+                config.Services.Insert(typeof(ModelBinderProvider), 0, modelBinderProvider);
             }
+
+            app.UseWebApi(config);
         }
     }
 }
