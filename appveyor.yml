@@ -3,6 +3,9 @@
 cache:
   - packages -> **\packages.config
 
+before_build:
+  - ps: sqllocaldb c "v13.0" 13.0 -s
+
 build_script:
   - ps: ./build.ps1
 

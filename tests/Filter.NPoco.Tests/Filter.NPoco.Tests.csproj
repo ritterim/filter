@@ -73,6 +73,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DatabaseFixture.cs" />
+    <Compile Include="Person.cs" />
     <Compile Include="SqlBuilderExtensionsTests.cs" />
     <Compile Include="IQueryProviderExtensionsTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
