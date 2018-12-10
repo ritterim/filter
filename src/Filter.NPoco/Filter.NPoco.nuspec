@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<package>
+  <metadata>
+    <id>RimDev.Filter.NPoco</id>
+    <version>$version$</version>
+    <authors>Ritter Insurance Marketing</authors>
+    <licenseUrl>https://raw.githubusercontent.com/ritterim/filter/master/LICENSE</licenseUrl>
+    <projectUrl>https://github.com/ritterim/filter</projectUrl>
+    <description>The "classy" way to filter collections. Supports NPoco.</description>
+    <copyright>Copyright 2018 Ritter Insurance Marketing</copyright>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <tags>npoco rimdev filter</tags>
+  </metadata>
+</package>

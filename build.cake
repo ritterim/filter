@@ -91,6 +91,15 @@ Task("Publish")
                 { "Configuration", configuration }
             }
         });
+
+        NuGetPack("./src/Filter.NPoco/Filter.NPoco.csproj", new NuGetPackSettings
+        {
+            OutputDirectory = publishDirectory,
+            Properties = new Dictionary<string, string>
+            {
+                { "Configuration", configuration }
+            }
+        });
     });
 
 Task("Default")
