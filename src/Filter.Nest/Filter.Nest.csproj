@@ -12,6 +12,9 @@
     <Description>The "classy" way to filter collections. Supports NEST.</Description>
     <Authors>Ritter Insurance Marketing</Authors>
     <Copyright>Copyright 2018 Ritter Insurance Marketing</Copyright>
+    <RepositoryUrl>https://github.com/ritterim/filter.git</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <PackageLicenseUrl>https://raw.githubusercontent.com/ritterim/filter/master/LICENSE</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/ritterim/filter</PackageProjectUrl>
     <PackageTags>nest rimdev filter</PackageTags>
@@ -19,6 +22,7 @@
 
   <ItemGroup>
     <PackageReference Include="Elasticsearch.Net" Version="6.3.0" />
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0-beta-63127-02" PrivateAssets="All" />
     <PackageReference Include="NEST" Version="6.3.0" />
     <PackageReference Include="Newtonsoft.Json" Version="9.0.1" />
   </ItemGroup>
