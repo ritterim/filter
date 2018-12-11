@@ -1,6 +1,6 @@
+using MartinCostello.SqlLocalDb;
 using System;
 using System.Data.Common;
-using System.Data.SqlLocalDb;
 
 namespace RimDev.Filter.Tests.Generic.Integration
 {
@@ -10,21 +10,16 @@ namespace RimDev.Filter.Tests.Generic.Integration
 
         public DatabaseFixture()
         {
-            lazyInstance = new Lazy<TemporarySqlLocalDbInstance>(
-                () => TemporarySqlLocalDbInstance.Create(true));
+            lazyInstance = new Lazy<TemporarySqlLocalDbInstance>(() =>
+            {
+                using (var localDb = new SqlLocalDbApi())
+                {
+                    return localDb.CreateTemporaryInstance(deleteFiles: true);
+                }
+            });
         }
 
-        public DbConnectionStringBuilder CreateConnectionStringBuilder()
-        {
-            var instance = lazyInstance.Value;
-
-            var builder = lazyInstance.Value.CreateConnectionStringBuilder();
-            builder.SetInitialCatalogName(Guid.NewGuid().ToString("N"));
-
-            return builder;
-        }
-
-        public string ConnectionString => CreateConnectionStringBuilder().ConnectionString;
+        public string ConnectionString => lazyInstance.Value.ConnectionString;
 
         public void Dispose()
         {

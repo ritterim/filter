@@ -6,21 +6,18 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <AssemblyName>RimDev.Filter.Nest</AssemblyName>
-    <RootNamespace>RimDev.Filter.Nest</RootNamespace>
-    <PackageId>RimDev.Filter.Nest</PackageId>
-    <Description>The "classy" way to filter collections. Supports NEST.</Description>
+    <AssemblyName>RimDev.Filter.Range.Web.Http.AspNetCore</AssemblyName>
+    <RootNamespace>RimDev.Filter.Range.Web.Http.AspNetCore</RootNamespace>
+    <PackageId>RimDev.Filter.Range.Web.Http.AspNetCore</PackageId>
+    <Description>The "classy" way to filter collections.</Description>
     <Authors>Ritter Insurance Marketing</Authors>
     <Copyright>Copyright 2018 Ritter Insurance Marketing</Copyright>
     <PackageLicenseUrl>https://raw.githubusercontent.com/ritterim/filter/master/LICENSE</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/ritterim/filter</PackageProjectUrl>
-    <PackageTags>nest rimdev filter</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Elasticsearch.Net" Version="6.3.0" />
-    <PackageReference Include="NEST" Version="6.3.0" />
-    <PackageReference Include="Newtonsoft.Json" Version="9.0.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Abstractions" Version="2.0.0" />
   </ItemGroup>
 
   <ItemGroup>

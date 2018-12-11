@@ -1,7 +1,7 @@
 ﻿using RimDev.Filter.Range.Generic;
 using System.Web.Http;
 
-namespace Range.Web.Http.Controllers
+namespace Range.Web.Http.Sample.AspNet.Controllers
 {
     public class HomeController : ApiController
     {
@@ -9,7 +9,7 @@ namespace Range.Web.Http.Controllers
         [Route("")]
         public IHttpActionResult Index([FromUri]Range<int> value)
         {
-            return Ok();
+            return Json(value);
         }
     }
 }
