@@ -38,6 +38,9 @@ namespace RimDev.Filter.Range.Web.Http.AspNetCore
             try
             {
                 var rangeResult = RimDev.Filter.Range.Range.FromString<T>(rawValue);
+
+                rangeResult.Validate();
+
                 bindingContext.Result = ModelBindingResult.Success(rangeResult);
 
                 return Task.CompletedTask;

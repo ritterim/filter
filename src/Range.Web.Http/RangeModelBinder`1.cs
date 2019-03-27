@@ -36,7 +36,11 @@ namespace RimDev.Filter.Range.Web.Http
 
             try
             {
-                bindingContext.Model = Range.FromString<T>(rawValue);
+                var rangeResult = Range.FromString<T>(rawValue);
+
+                rangeResult.Validate();
+
+                bindingContext.Model = rangeResult;
 
                 return true;
             }

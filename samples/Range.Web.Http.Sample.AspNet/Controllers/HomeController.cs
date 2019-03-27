@@ -9,6 +9,11 @@ namespace Range.Web.Http.Sample.AspNet.Controllers
         [Route("")]
         public IHttpActionResult Index([FromUri]Range<int> value)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
             return Json(value);
         }
     }
