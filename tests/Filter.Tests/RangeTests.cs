@@ -218,6 +218,72 @@ namespace RimDev.Filter.Range.Tests
             }
 
             [Fact]
+            public void Validate_throws_if_maximum_is_less_than_minimum_with_int()
+            {
+                var rangeResult = Range.FromString<int>("[2,1]");
+
+                var exception = Assert.Throws<InvalidOperationException>(() =>
+                {
+                    rangeResult.Validate();
+                });
+
+                Assert.NotNull(exception);
+                Assert.Equal(
+                    "Minimum value of range must be less than or equal to maximum value.",
+                    exception.Message);
+            }
+
+            [Theory,
+            InlineData("[2017-01-01T00:00:00.000+00:00, 2016-01-01T00:00:00.000+00:00]")]
+            public void Validate_throws_if_maximum_is_less_than_minimum_with_datetime(string value)
+            {
+                var rangeResult = Range.FromString<DateTime>(value);
+
+                var exception = Assert.Throws<InvalidOperationException>(() =>
+                {
+                    rangeResult.Validate();
+                });
+
+                Assert.NotNull(exception);
+                Assert.Equal(
+                    "Minimum value of range must be less than or equal to maximum value.",
+                    exception.Message);
+            }
+
+            [Theory,
+            InlineData("[2017-01-01T00:00:00.000+00:00, 2016-01-01T00:00:00.000+00:00]")]
+            public void Validate_throws_if_maximum_is_less_than_minimum_with_datetimeoffset(string value)
+            {
+                var rangeResult = Range.FromString<DateTimeOffset>(value);
+
+                var exception = Assert.Throws<InvalidOperationException>(() =>
+                {
+                    rangeResult.Validate();
+                });
+
+                Assert.NotNull(exception);
+                Assert.Equal(
+                    "Minimum value of range must be less than or equal to maximum value.",
+                    exception.Message);
+            }
+
+            [Fact]
+            public void Validate_throws_if_maximum_is_equal_to_minimum_when_non_inclusive()
+            {
+                var rangeResult = Range.FromString<int>("(2,2)");
+
+                var exception = Assert.Throws<InvalidOperationException>(() =>
+                {
+                    rangeResult.Validate();
+                });
+
+                Assert.NotNull(exception);
+                Assert.Equal(
+                    "Minimum value of range must be less than maximum value when range is non-inclusive.",
+                    exception.Message);
+            }
+
+            [Fact]
             public void Implicitly_cast_from_string_to_range()
             {
                 Range<int> range = "[1,5]";
