@@ -15,7 +15,7 @@
     <RepositoryUrl>https://github.com/ritterim/filter.git</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
-    <PackageLicenseUrl>https://raw.githubusercontent.com/ritterim/filter/master/LICENSE</PackageLicenseUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/ritterim/filter</PackageProjectUrl>
     <PackageTags>npoco rimdev filter</PackageTags>
   </PropertyGroup>
