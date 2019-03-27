@@ -74,6 +74,7 @@ While any type is allowed as a range, only certain types will work when filterin
   - byte
   - char
   - DateTime
+  - DateTimeOffset
   - decimal
   - double
   - float
