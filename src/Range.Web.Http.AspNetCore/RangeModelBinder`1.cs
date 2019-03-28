@@ -35,25 +35,22 @@ namespace RimDev.Filter.Range.Web.Http.AspNetCore
                 return Task.CompletedTask;
             }
 
-            try
+            var rangeResult = RimDev.Filter.Range.Range.GetResultFromString<T>(rawValue);
+
+            if (rangeResult.IsValid)
             {
-                var rangeResult = RimDev.Filter.Range.Range.FromString<T>(rawValue);
-
-                rangeResult.Validate();
-
                 bindingContext.Result = ModelBindingResult.Success(rangeResult);
-
-                return Task.CompletedTask;
             }
-            catch (Exception ex)
+            else
             {
                 bindingContext.ModelState.AddModelError(
                     bindingContext.ModelName,
-                    ex.Message);
+                    string.Join(", ", rangeResult.Errors));
 
                 bindingContext.Result = ModelBindingResult.Failed();
-                return Task.CompletedTask;
             }
+
+            return Task.CompletedTask;
         }
     }
 }
