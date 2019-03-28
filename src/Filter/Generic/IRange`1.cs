@@ -10,7 +10,5 @@ namespace RimDev.Filter.Range.Generic
 
         bool IsMinInclusive { get; }
         bool IsMaxInclusive { get; }
-
-        void Validate();
     }
 }

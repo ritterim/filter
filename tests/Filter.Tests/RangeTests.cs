@@ -218,13 +218,11 @@ namespace RimDev.Filter.Range.Tests
             }
 
             [Fact]
-            public void Validate_throws_if_maximum_is_less_than_minimum_with_int()
+            public void Throws_if_maximum_is_less_than_minimum_with_int()
             {
-                var rangeResult = Range.FromString<int>("[2,1]");
-
-                var exception = Assert.Throws<InvalidOperationException>(() =>
+                var exception = Assert.Throws<FormatException>(() =>
                 {
-                    rangeResult.Validate();
+                    var rangeResult = Range.FromString<int>("[2,1]");
                 });
 
                 Assert.NotNull(exception);
@@ -235,13 +233,11 @@ namespace RimDev.Filter.Range.Tests
 
             [Theory,
             InlineData("[2017-01-01T00:00:00.000+00:00, 2016-01-01T00:00:00.000+00:00]")]
-            public void Validate_throws_if_maximum_is_less_than_minimum_with_datetime(string value)
+            public void Throws_if_maximum_is_less_than_minimum_with_datetime(string value)
             {
-                var rangeResult = Range.FromString<DateTime>(value);
-
-                var exception = Assert.Throws<InvalidOperationException>(() =>
+                var exception = Assert.Throws<FormatException>(() =>
                 {
-                    rangeResult.Validate();
+                    var rangeResult = Range.FromString<DateTime>(value);
                 });
 
                 Assert.NotNull(exception);
@@ -252,13 +248,11 @@ namespace RimDev.Filter.Range.Tests
 
             [Theory,
             InlineData("[2017-01-01T00:00:00.000+00:00, 2016-01-01T00:00:00.000+00:00]")]
-            public void Validate_throws_if_maximum_is_less_than_minimum_with_datetimeoffset(string value)
+            public void Throws_if_maximum_is_less_than_minimum_with_datetimeoffset(string value)
             {
-                var rangeResult = Range.FromString<DateTimeOffset>(value);
-
-                var exception = Assert.Throws<InvalidOperationException>(() =>
+                var exception = Assert.Throws<FormatException>(() =>
                 {
-                    rangeResult.Validate();
+                    var rangeResult = Range.FromString<DateTimeOffset>(value);
                 });
 
                 Assert.NotNull(exception);
@@ -268,13 +262,11 @@ namespace RimDev.Filter.Range.Tests
             }
 
             [Fact]
-            public void Validate_throws_if_maximum_is_equal_to_minimum_when_non_inclusive()
+            public void Throws_if_maximum_is_equal_to_minimum_when_non_inclusive()
             {
-                var rangeResult = Range.FromString<int>("(2,2)");
-
-                var exception = Assert.Throws<InvalidOperationException>(() =>
+                var exception = Assert.Throws<FormatException>(() =>
                 {
-                    rangeResult.Validate();
+                    var rangeResult = Range.FromString<int>("(2,2)");
                 });
 
                 Assert.NotNull(exception);

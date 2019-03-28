@@ -22,6 +22,9 @@ bld/
 [Oo]bj/
 tools/
 
+# Benchmarking
+BenchmarkDotNet.Artifacts/
+
 # Visual Studo 2015 cache/options directory
 .vs/
 

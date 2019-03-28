@@ -34,24 +34,20 @@ namespace RimDev.Filter.Range.Web.Http
                 return true;
             }
 
-            try
+            var rangeResult = Range.GetResultFromString<T>(rawValue);
+
+            if (rangeResult.IsValid)
             {
-                var rangeResult = Range.FromString<T>(rawValue);
-
-                rangeResult.Validate();
-
-                bindingContext.Model = rangeResult;
-
-                return true;
+                bindingContext.Model = rangeResult.Value;
             }
-            catch (Exception ex)
+            else
             {
                 bindingContext.ModelState.AddModelError(
                     bindingContext.ModelName,
-                    ex.Message);
-
-                return true;
+                    string.Join(", ", rangeResult.Errors));
             }
+
+            return true;
         }
     }
 }

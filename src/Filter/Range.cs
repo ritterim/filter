@@ -8,7 +8,28 @@ namespace RimDev.Filter.Range
 {
     public static class Range
     {
+        /// <summary>
+        /// Try to parse an IRange<T> from a string. Throws FormatException if value is not valid.
+        /// Note: Prefer using GetResultFromString<T>(string value) in performance critical scenarios
+        /// to avoid most instances of control flow via exceptions.
+        /// </summary>
         public static IRange<T> FromString<T>(string value)
+            where T : struct
+        {
+            var rangeResult = Range.GetResultFromString<T>(value);
+
+            if (rangeResult.Errors.Any())
+            {
+                throw new FormatException(string.Join(", ", rangeResult.Errors));
+            }
+
+            return rangeResult.Value;
+        }
+
+        /// <summary>
+        /// Try to parse an IRange<T> from a string.
+        /// Returns RangeResult<T> to avoid throwing an exception.
+        public static RangeResult<T> GetResultFromString<T>(string value)
             where T : struct
         {
             var range = new Range<T>();
@@ -32,7 +53,7 @@ namespace RimDev.Filter.Range
 
             if (!parsedValue.Success)
             {
-                throw new FormatException("value does not match expected format.");
+                return RangeResult<T>.Error("value does not match expected format.");
             }
             else
             {
@@ -63,17 +84,17 @@ namespace RimDev.Filter.Range
                 if (string.IsNullOrWhiteSpace(parsedMinValue) &&
                     string.IsNullOrWhiteSpace(parsedMaxValue))
                 {
-                    throw new FormatException("value cannot be open-ended for both min and max-values.");
+                    return RangeResult<T>.Error("value cannot be open-ended for both min and max-values.");
                 }
 
                 if (isMinInclusive && isMinInfinite)
                 {
-                    throw new FormatException("value cannot have inclusive infinite lower-bound.");
+                    return RangeResult<T>.Error("value cannot have inclusive infinite lower-bound.");
                 }
 
                 if (isMaxInclusive && isMaxInfinite)
                 {
-                    throw new FormatException("value cannot have inclusive infinite upper-bound.");
+                    return RangeResult<T>.Error("value cannot have inclusive infinite upper-bound.");
                 }
 
                 T? minValue = default(T?);
@@ -87,7 +108,7 @@ namespace RimDev.Filter.Range
                     }
                     catch (Exception)
                     {
-                        throw new FormatException(
+                        return RangeResult<T>.Error(
                             string.Format("parsed minimum value `{0}` does not match expected type of `{1}`.",
                             groups["minValue"].Value,
                             typeof(T).Name));
@@ -102,7 +123,7 @@ namespace RimDev.Filter.Range
                     }
                     catch (Exception)
                     {
-                        throw new FormatException(
+                        return RangeResult<T>.Error(
                             string.Format("parsed maximum value `{0}` does not match expected type of `{1}`.",
                             groups["maxValue"].Value,
                             typeof(T).Name));
@@ -115,7 +136,21 @@ namespace RimDev.Filter.Range
                 range.IsMaxInclusive = isMaxInclusive;
             }
 
-            return range;
+            if (range.MinValue.HasValue && range.MaxValue.HasValue)
+            {
+                var anyInclusiveRanges = range.IsMinInclusive || range.IsMaxInclusive;
+                var compareResult = Comparer<T>.Default.Compare(range.MinValue.Value, range.MaxValue.Value);
+
+                if (anyInclusiveRanges && compareResult > 0)
+                    return RangeResult<T>.Error(
+                        "Minimum value of range must be less than or equal to maximum value.");
+
+                if (!anyInclusiveRanges && compareResult >= 0)
+                    return RangeResult<T>.Error(
+                        "Minimum value of range must be less than maximum value when range is non-inclusive.");
+            }
+
+            return RangeResult<T>.Success(range);
         }
 
         public static bool IsDateRange(object range)
