@@ -331,6 +331,28 @@ namespace RimDev.Filter.Range.Tests
                 
                 Assert.Equal(expected, result);
             }
+
+            [Fact]
+            public void Can_use_formatprovider_for_datetime_range_null_min()
+            {
+                var expected = "[,2018-02-02)";
+                var range = Range.FromString<DateTime>(expected);
+
+                var result = range.ToString("yyyy-MM-dd");
+                
+                Assert.Equal(expected, result);
+            }
+            
+            [Fact]
+            public void Can_use_formatprovider_for_datetime_range_null_max()
+            {
+                var expected = "[2017-01-01,)";
+                var range = Range.FromString<DateTime>(expected);
+
+                var result = range.ToString("yyyy-MM-dd");
+                
+                Assert.Equal(expected, result);
+            }
         }
     }
 }
