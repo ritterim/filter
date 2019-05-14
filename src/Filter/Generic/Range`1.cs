@@ -43,5 +43,17 @@ namespace RimDev.Filter.Range.Generic
                     IsMaxInclusive ? "]" : ")"
                 );
         }
+
+        public string ToString(string formatProvider)
+        {
+            var format = $"{{0:{formatProvider}}}";
+            
+            return string.Format("{0}{1},{2}{3}",
+                IsMinInclusive ? "[" : "(",
+                string.Format(format, MinValue),
+                string.Format(format, MaxValue),
+                IsMaxInclusive ? "]" : ")"
+            );
+        }
     }
 }
