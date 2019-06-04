@@ -8,7 +8,7 @@ namespace RimDev.Filter
     {
         public ICollection<string> Errors { get; set; } = new List<string>();
 
-        public bool IsValid => Errors.Any();
+        public bool IsValid => !Errors.Any();
 
         public IRange<T> Value { get; set; }
 
