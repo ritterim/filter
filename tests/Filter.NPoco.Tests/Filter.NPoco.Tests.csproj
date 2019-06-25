@@ -1,7 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
-  <PropertyGroup>
-    <TargetFrameworks>net462;netcoreapp2.1</TargetFrameworks>
+  
+  <PropertyGroup Condition=" '$(OS)' != 'Windows_NT' ">
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <NoWarn>NU1701</NoWarn>
+    <AssemblyName>Filter.NPoco.Tests</AssemblyName>
+    <RootNamespace>Filter.NPoco.Tests</RootNamespace>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(OS)' == 'Windows_NT' ">
+    <TargetFrameworks>netcoreapp2.1;net462</TargetFrameworks>
     <NoWarn>NU1701</NoWarn>
     <AssemblyName>Filter.NPoco.Tests</AssemblyName>
     <RootNamespace>Filter.NPoco.Tests</RootNamespace>
