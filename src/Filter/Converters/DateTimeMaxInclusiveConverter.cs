@@ -5,7 +5,7 @@ using System.Linq;
 namespace RimDev.Filter.Range
 {
     /// <summary>
-    /// Handles Inclusive Date Ranges ([2019-01-01,2019-
+    /// Handles Inclusive Date Ranges ex. [2019-01-01,2019-01-01]. The inclusive date assumes that if no time is specified, that the user intended to include the entire date up to the last instance of that date (yyyy-mm-dd 23:59:59.999).
     /// </summary>
     public class DateTimeMaxInclusiveConverter : Converter
     {        
