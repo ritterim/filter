@@ -1,17 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
-  <PropertyGroup Condition=" '$(OS)' == 'Windows_NT' ">
-    <TargetFramework>net461</TargetFramework>
-    <OutputType>exe</OutputType>
-  </PropertyGroup>
-
-  <PropertyGroup Condition=" '$(OS)' != 'Windows_NT' ">
-    <TargetFramework>netcoreapp2.1</TargetFramework>
+  <PropertyGroup>
+    <TargetFramework>net462</TargetFramework>
     <OutputType>exe</OutputType>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNet.WebApi.OwinSelfHost" Version="5.2.3" />
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.0-preview.2" PrivateAssets="All" />
   </ItemGroup>
 
   <ItemGroup>
