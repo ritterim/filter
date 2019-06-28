@@ -14,7 +14,7 @@ namespace RimDev.Filter.Range
             if (context.Kind == ConvertingKind.MaxInclusive)
             {
                 dynamic dynamicValue;
-                if (typeof(DateTimeOffset?).IsAssignableFrom(typeof(T)))
+                if (typeof(DateTimeOffset).IsAssignableFrom(typeof(T)))
                 {
                     if (DateTimeOffset.TryParse(context.Value, out var parsed))
                     {
@@ -39,7 +39,7 @@ namespace RimDev.Filter.Range
                         return true;
                     }
                 }
-                else if (typeof(DateTime?).IsAssignableFrom(typeof(T)))
+                else if (typeof(DateTime).IsAssignableFrom(typeof(T)))
                 {
                     if (DateTime.TryParse(context.Value, out var parsed))
                     {
