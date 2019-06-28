@@ -6,6 +6,8 @@ using RimDev.Filter.Generic;
 using RimDev.Filter.Range.Generic;
 using Xunit;
 
+#if !NETCOREAPP2_1
+
 namespace RimDev.Filter.Tests.Generic.Integration
 {
     public class EfTests : IClassFixture<DatabaseFixture>
@@ -219,3 +221,5 @@ namespace RimDev.Filter.Tests.Generic.Integration
         }
     }
 }
+
+#endif

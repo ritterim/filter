@@ -1,9 +1,15 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
+  <PropertyGroup Condition=" '$(OS)' != 'Windows_NT' ">
+    <TargetFrameworks>netcoreapp2.1</TargetFrameworks>
+    <NoWarn>NU1701</NoWarn>
+    <AssemblyName>Filter.Tests</AssemblyName>
+    <RootNamespace>Filter.Tests</RootNamespace>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(OS)' == 'Windows_NT' ">
     <!-- <TargetFrameworks>net462;netcoreapp2.1</TargetFrameworks> -->
     <!-- EntityFramework does not work with netcoreapp2.1 -->
-    <TargetFrameworks>net462</TargetFrameworks>
+    <TargetFrameworks>net462;netcoreapp2.1</TargetFrameworks>
     <NoWarn>NU1701</NoWarn>
     <AssemblyName>Filter.Tests</AssemblyName>
     <RootNamespace>Filter.Tests</RootNamespace>
@@ -19,6 +25,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.0-preview.2" PrivateAssets="All" />
   </ItemGroup>
 
   <ItemGroup>

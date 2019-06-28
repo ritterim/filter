@@ -104,7 +104,10 @@ namespace RimDev.Filter.Range
                 {
                     try
                     {
-                        minValue = SmartConverter.Convert<T>(parsedMinValue);
+                        minValue = SmartConverter.Convert<T>(
+                            parsedMinValue, 
+                            isMinInclusive ? ConvertingKind.MinInclusive : ConvertingKind.MinExclusive
+                        );
                     }
                     catch (Exception)
                     {
@@ -119,7 +122,9 @@ namespace RimDev.Filter.Range
                 {
                     try
                     {
-                        maxValue = SmartConverter.Convert<T>(parsedMaxValue);
+                        maxValue = SmartConverter.Convert<T>(parsedMaxValue, 
+                            isMaxInclusive ? ConvertingKind.MaxInclusive : ConvertingKind.MaxExclusive
+                        );
                     }
                     catch (Exception)
                     {
@@ -226,10 +231,16 @@ namespace RimDev.Filter.Range
                 IsMinInclusive = r.IsMinInclusive,
                 MinValue = r.MinValue == null
                     ? (decimal?) null 
-                    : SmartConverter.Convert<decimal>(r.MinValue.ToString()),
+                    : SmartConverter.Convert<decimal>(
+                        r.MinValue.ToString(), 
+                         r.IsMinInclusive ? ConvertingKind.MinInclusive : ConvertingKind.MinExclusive
+                    ),
                 MaxValue = r.MaxValue == null
                     ? (decimal?) null 
-                    : SmartConverter.Convert<decimal>(r.MaxValue.ToString()) 
+                    : SmartConverter.Convert<decimal>(
+                        r.MaxValue.ToString(), 
+                        r.IsMaxInclusive ? ConvertingKind.MaxInclusive : ConvertingKind.MaxExclusive
+                    )
             };
 
             return numeric;
