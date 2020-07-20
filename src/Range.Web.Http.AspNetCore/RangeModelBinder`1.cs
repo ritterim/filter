@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using RimDev.Filter.Range.Generic;
-using System;
 using System.Threading.Tasks;
 
 namespace RimDev.Filter.Range.Web.Http.AspNetCore
@@ -35,11 +34,11 @@ namespace RimDev.Filter.Range.Web.Http.AspNetCore
                 return Task.CompletedTask;
             }
 
-            var rangeResult = RimDev.Filter.Range.Range.GetResultFromString<T>(rawValue);
+            var rangeResult = Range.GetResultFromString<T>(rawValue);
 
             if (rangeResult.IsValid)
             {
-                bindingContext.Result = ModelBindingResult.Success(rangeResult);
+                bindingContext.Result = ModelBindingResult.Success(rangeResult.Value);
             }
             else
             {
