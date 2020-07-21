@@ -13,9 +13,9 @@ namespace Range.Web.Http.Sample.AspNetCore
 
             foreach (var type in RimDev.Filter.Filter.SupportedRangeTypes)
             {
-                var rangeType = typeof(Range<>).MakeGenericType(type);
+                var rangeType = typeof(IRange<>).MakeGenericType(type);
 
-                if (rangeType == context.Metadata.ModelType)
+                if (rangeType.IsAssignableFrom(context.Metadata.ModelType))
                 {
                     var modelBinder = (IModelBinder)Activator.CreateInstance(typeof(RangeModelBinder<>).MakeGenericType(type));
 
