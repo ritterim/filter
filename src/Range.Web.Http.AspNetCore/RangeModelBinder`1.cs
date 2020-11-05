@@ -22,7 +22,14 @@ namespace RimDev.Filter.Range.Web.Http.AspNetCore
                 return Task.CompletedTask;
             }
 
-            var rawValue = valueProviderResult.FirstValue;
+            /*
+             * Range syntax uses a comma to separate min/max values.
+             * However, the .NET Core value-provider uses comma as an array-separator.
+             * Taking only the first-value will result in only getting a min-value.
+             */
+            var rawValue = valueProviderResult.Values.Count == 2
+                ? string.Join(",", valueProviderResult.Values)
+                : valueProviderResult.FirstValue;
 
             if (rawValue == null)
             {
