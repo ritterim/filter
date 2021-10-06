@@ -22,7 +22,6 @@
 
   <ItemGroup>
     <PackageReference Include="Elasticsearch.Net" Version="6.3.0" />
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0-beta-63127-02" PrivateAssets="All" />
     <PackageReference Include="NEST" Version="6.3.0" />
     <PackageReference Include="Newtonsoft.Json" Version="9.0.1" />
     <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.0-preview.2" PrivateAssets="All" />
