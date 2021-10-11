@@ -1,10 +1,8 @@
-﻿image: Visual Studio 2017
+﻿image: Ubuntu2004
 
 cache:
   - packages -> **\packages.config
-
-before_build:
-  - ps: sqllocaldb c "v13.0" 13.0 -s
+  - tools -> build.ps1
 
 build_script:
   - ps: ./build.ps1

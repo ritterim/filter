@@ -203,3 +203,7 @@ FakesAssemblies/
 
 # JetBrains Rider
 .idea/
+
+build/
+
+build.cake
