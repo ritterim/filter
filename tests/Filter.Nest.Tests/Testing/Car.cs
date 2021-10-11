@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Filter.Nest.Tests
+namespace Filter.Nest.Tests.Testing
 {
     public class Car
     {
