@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   
   <PropertyGroup>
     <NoWarn>NU1701</NoWarn>
@@ -8,22 +8,23 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.9.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.11.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="NPoco" Version="3.9.4" />
     <PackageReference Include="RimDev.Automation.Sql" Version="0.3.0" />
-    <PackageReference Include="RimDev.Sandbox" Version="0.2.2" />
-    <PackageReference Include="RimDev.Sandbox.LocalDb" Version="0.2.2" />
-    <PackageReference Include="xunit" Version="2.4.0" />
-    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.0">
+    <PackageReference Include="System.Data.SqlClient" Version="4.8.3" />
+    <PackageReference Include="xunit" Version="2.4.1" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.3">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.0-preview.2" PrivateAssets="All" />
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.2" PrivateAssets="All" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Filter\Filter.csproj" />
     <ProjectReference Include="..\..\src\Filter.NPoco\Filter.NPoco.csproj" />
+    <ProjectReference Include="..\Filter.Tests.Common\Filter.Tests.Common.csproj" />
   </ItemGroup>
 
   <ItemGroup>
