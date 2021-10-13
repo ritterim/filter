@@ -23,7 +23,7 @@ namespace Filter.Tests.Common.Testing.Configuration
             Console.WriteLine($"Looking for appsettings JSON files in '{baseDirectory}'.");
             
             var environmentName = GetRimDevTestEnvironmentName();
-            Console.WriteLine($"Loading appsettings.json and appsettings.{environmentName}.json.");
+            Console.WriteLine($"Attempting to load appsettings.json and appsettings.{environmentName}.json.");
 
             return new ConfigurationBuilder()
                 .SetBasePath(AppContext.BaseDirectory)
