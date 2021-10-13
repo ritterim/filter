@@ -3,12 +3,15 @@ New-Item -ItemType directory -Path "build" -Force | Out-Null
 # Release whenever a commit is merged to master
 $ENV:UseMasterReleaseStrategy = "true"
 
+# Control which appsettings.ENV.json also gets loaded for running tests
+$ENV:RIMDEVTEST_ENVIRONMENT = "AppVeyor"
+
 # The following variables should be set to true if unit tests need a Docker container created
 $ENV:RIMDEV_CREATE_TEST_DOCKER_ES = "true" # Elasticsearch on 9201/9301
 $ENV:RIMDEV_CREATE_TEST_DOCKER_SQL = "true" # MS SQL on 11433/11434
 $ENV:RIMDEVTESTS__SQL__PASSWORD = "MvKbeUn18mIxc0r" # This password is used for the temporary Docker container
 
-# backwards compatibility for build-net5.cake file
+# backwards compatibility for existing build-net5.cake file
 $ENV:RIMDEV_TEST_DOCKER_MSSQL_SA_PASSWORD = $ENV:RIMDEVTESTS__SQL__PASSWORD
 
 try {

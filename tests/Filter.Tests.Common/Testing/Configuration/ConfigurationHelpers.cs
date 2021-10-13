@@ -7,37 +7,23 @@ namespace Filter.Tests.Common.Testing.Configuration
 {
     public static class ConfigurationHelpers
     {
-        public static bool UseDockerDependencies()
+        /// <summary>Figure out which additional environment-specific appsettings.json
+        /// to load over top of the base appsettings.json file settings.</summary>
+        public static string GetRimDevTestEnvironmentName()
         {
-            // https://www.appveyor.com/docs/environment-variables/
-            
-            var useDockerForElasticsearch = bool.TryParse(
-                Environment.GetEnvironmentVariable("RIMDEV_CREATE_TEST_DOCKER_ES"),
-                out var parseCreateTestDockerElasticsearch
-                ) && parseCreateTestDockerElasticsearch;
-            
-            var useDockerForSql = bool.TryParse(
-                Environment.GetEnvironmentVariable("RIMDEV_CREATE_TEST_DOCKER_SQL"),
-                out var parseCreateTestDockerSql
-                ) && parseCreateTestDockerSql;
-
-            return useDockerForElasticsearch || useDockerForSql;
-        }
-        
-        public static string GetEnvironmentName()
-        {
-            if (UseDockerDependencies()) return "Docker";
-            return Environments.Development;
+            var rimDevTestEnvironment = Environment.GetEnvironmentVariable("RIMDEVTEST_ENVIRONMENT");
+            return string.IsNullOrWhiteSpace(rimDevTestEnvironment) 
+                ? Environments.Development 
+                : rimDevTestEnvironment;
         }
         
         public static IConfigurationRoot GetConfigurationRoot()
         {
-            var environmentName = GetEnvironmentName();
+            var environmentName = GetRimDevTestEnvironmentName();
             return new ConfigurationBuilder()
                 .SetBasePath(AppContext.BaseDirectory)
                 .AddJsonFile($"appsettings.json", optional: true)
                 .AddJsonFile($"appsettings.{environmentName}.json", optional: true)
-                //.AddUserSecrets("e3dfcccf-0cb3-423a-b302-e3e92e95c128")
                 .AddEnvironmentVariables()
                 .Build();
         }
