@@ -1,7 +1,7 @@
-﻿using NPoco;
-using System;
+﻿using System;
+using NPoco;
 
-namespace Filter.NPoco.Tests
+namespace Filter.NPoco.Tests.Testing
 {
     [TableName("Person")]
     [PrimaryKey(nameof(Id))]

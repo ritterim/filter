@@ -21,6 +21,9 @@ bld/
 [Bb]in/
 [Oo]bj/
 tools/
+build/
+artifacts/
+build.cake
 
 # Benchmarking
 BenchmarkDotNet.Artifacts/
@@ -203,3 +206,4 @@ FakesAssemblies/
 
 # JetBrains Rider
 .idea/
+
