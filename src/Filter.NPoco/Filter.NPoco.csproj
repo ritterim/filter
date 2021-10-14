@@ -23,7 +23,6 @@
   <ItemGroup>
     <PackageReference Include="NPoco" Version="3.9.4" />
     <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.2" PrivateAssets="All" />
-    <PackageReference Include="System.Data.SqlClient" Version="4.8.3" />
   </ItemGroup>
 
   <ItemGroup>
