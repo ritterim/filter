@@ -4,6 +4,7 @@ using System.Data.SqlClient;
 using Filter.Tests.Common.Testing;
 using Filter.Tests.Common.Testing.Configuration;
 using NPoco;
+using NPoco.SqlServer;
 
 namespace Filter.NPoco.Tests.Testing
 {
@@ -97,9 +98,7 @@ create table Person(
 
         public IDatabase GetDatabaseInstance()
         {
-            var connection = CreateSqlConnection();
-            connection.Open();
-            return new Database(connection, DatabaseType.SqlServer2012);
+            return new SqlServerDatabase(ConnectionString);
         }
     }
 }
