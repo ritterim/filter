@@ -24,17 +24,21 @@ By default, the unit/system tests assume that you have:
 - Microsoft SQL Server (nearly any variant) running on localhost,1433 with a no-password 'sa' account.
 - Elasticsearch 6.x running on http://localhost:9200.
 
+However, if you have Docker installed, you can just run `build.cmd` or `build.sh` to build/test the project.
+
 ## Customizing Test Configuration
 
 Because the actual port/password will vary according to the developer's personal machine settings, it is possible to override these configuration values when running the unit/system tests.
 
 ### appsettings.Development.json
-
-The appsettings.Development.json files under each of the xUnit test projects can be edited in order to customize how the unit test fixtures will communicate with SQL/Elasticsearch.  These files are empty by default but included in the git repo because they need to be copied to the output directory.  These files have the `<CopyToOutputDirectory>Always</CopyToOutputDirectory>` property applied in the test project's `.csproj` file.
+    
+You can create `appsettings.Development.json` files under each of the xUnit test projects to customize the settings for communication with SQL/Elasticsearch.  In addition, these files must be added to the `.csproj` file and have the `<CopyToOutputDirectory>Always</CopyToOutputDirectory>` property applied.
 
 ### Environment Variables
 
-Because we follow the .NET Core configuration convention where environment variables can override portions of the appsettings.json value, you can set environment variables on your development machine to configure these values.  Note that by convention, you need to use double-underscores between levels in the JSON hierarchy.
+Because we follow the .NET Core configuration convention where environment variables can override portions of the appsettings.json value, you can set environment variables on your development machine to configure these values.  Note that by convention, you need to use double-underscores between levels in the JSON hierarchy.  
+
+For JetBrains Rider users, take a look at "Preferences" -> "Test Runner -> "Environment Variables".
 
 #### Elasticsearch
 
@@ -48,6 +52,3 @@ Because we follow the .NET Core configuration convention where environment varia
 - `RIMDEVTESTS__SQL__PORT="11433"`
 - `RIMDEVTESTS__SQL__USERID="sa"` 
 - `RIMDEVTESTS__SQL__PASSWORD="your-local-sa-password"` 
-
-
-
