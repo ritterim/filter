@@ -10,6 +10,7 @@
   <ItemGroup>
     <PackageReference Include="Elasticsearch.Net" Version="6.3.0" />
     <PackageReference Include="NEST" Version="6.3.0" />
+    <PackageReference Include="NETStandard.Library" Version="2.0.3" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.11.0" />
     <PackageReference Include="xunit" Version="2.4.1" />
