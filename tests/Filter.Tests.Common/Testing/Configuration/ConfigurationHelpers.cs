@@ -11,6 +11,13 @@ namespace Filter.Tests.Common.Testing.Configuration
         /// to load over top of the base appsettings.json file settings.</summary>
         public static string GetRimDevTestEnvironmentName()
         {
+            // https://www.appveyor.com/docs/environment-variables/
+            var appVeyorVariable = Environment.GetEnvironmentVariable("APPVEYOR");
+            var isAppVeyor = !string.IsNullOrEmpty(appVeyorVariable) 
+                && bool.TryParse(appVeyorVariable, out var parsedAppVeyorVariable)
+                && parsedAppVeyorVariable;
+            if (isAppVeyor) return "AppVeyor";
+        
             var rimDevTestEnvironment = Environment.GetEnvironmentVariable("RIMDEVTEST_ENVIRONMENT");
             return string.IsNullOrWhiteSpace(rimDevTestEnvironment) 
                 ? Environments.Development 
