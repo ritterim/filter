@@ -21,8 +21,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Elasticsearch.Net" Version="6.3.0" />
-    <PackageReference Include="NEST" Version="6.3.0" />
+    <PackageReference Include="Elasticsearch.Net" Version="6.8.9" />
+    <PackageReference Include="NEST" Version="6.8.9" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.2" PrivateAssets="All" />
   </ItemGroup>
