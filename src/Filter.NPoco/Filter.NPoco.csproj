@@ -11,7 +11,7 @@
     <PackageId>RimDev.Filter.NPoco</PackageId>
     <Description>The "classy" way to filter collections. Supports NPoco.</Description>
     <Authors>Ritter Insurance Marketing</Authors>
-    <Copyright>Copyright 2018 Ritter Insurance Marketing</Copyright>
+    <Copyright>Copyright 2018-2022 Ritter Insurance Marketing</Copyright>
     <RepositoryUrl>https://github.com/ritterim/filter.git</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
@@ -22,7 +22,7 @@
 
   <ItemGroup>
     <PackageReference Include="NPoco" Version="5.3.2" />
-    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.2" PrivateAssets="All" />
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3" PrivateAssets="All" />
   </ItemGroup>
 
   <ItemGroup>
