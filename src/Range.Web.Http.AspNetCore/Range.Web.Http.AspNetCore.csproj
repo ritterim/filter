@@ -11,7 +11,7 @@
     <PackageId>RimDev.Filter.Range.Web.Http.AspNetCore</PackageId>
     <Description>The "classy" way to filter collections.</Description>
     <Authors>Ritter Insurance Marketing</Authors>
-    <Copyright>Copyright 2018 Ritter Insurance Marketing</Copyright>
+    <Copyright>Copyright 2018-2022 Ritter Insurance Marketing</Copyright>
     <RepositoryUrl>https://github.com/ritterim/filter.git</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
@@ -21,8 +21,8 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Abstractions" Version="2.2.0" />
-    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.2" PrivateAssets="All" />
-    <PackageReference Include="System.Text.Encodings.Web" Version="4.5.1" />
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3" PrivateAssets="All" />
+    <PackageReference Include="System.Text.Encodings.Web" Version="5.0.1" />
   </ItemGroup>
 
   <ItemGroup>
